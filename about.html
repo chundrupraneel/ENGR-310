@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — AdmitU</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== BIO SECTION ===== */
+    .bio-section {
+      background: var(--white);
+    }
+
+    .bio-inner {
+      display: grid;
+      grid-template-columns: 1fr 1.35fr;
+      gap: 72px;
+      align-items: start;
+    }
+
+    .bio-photos {
+      position: sticky;
+      top: 90px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .bio-photo-main {
+      width: 100%;
+      height: 340px;
+      border-radius: var(--radius-lg);
+    }
+
+    .bio-photos-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .bio-photo-small {
+      height: 170px;
+      border-radius: var(--radius);
+    }
+
+    .bio-content .section-label {
+      margin-bottom: 10px;
+    }
+
+    .bio-content h2 {
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .bio-content .subtitle-name {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .bio-divider {
+      width: 56px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 2px;
+      margin-bottom: 28px;
+    }
+
+    .bio-content p {
+      color: var(--gray-dark);
+      font-size: 1.02rem;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--gray-light);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 36px 0;
+      border: 1px solid var(--gray-light);
+    }
+
+    .stat-item {
+      background: var(--off-white);
+      padding: 22px 16px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--gray);
+      font-weight: 500;
+    }
+
+    /* Credentials */
+    .credentials {
+      margin-top: 32px;
+    }
+
+    .credentials h4 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 16px;
+    }
+
+    .credential-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .credential-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.97rem;
+      color: var(--gray-dark);
+    }
+
+    .cred-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 7px;
+    }
+
+    /* ===== VIDEO SECTION ===== */
+    .video-section {
+      background: var(--off-white);
+    }
+
+    .video-section .section-header {
+      margin-bottom: 48px;
+    }
+
+    .video-wrapper {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .video-embed-placeholder {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: linear-gradient(135deg, var(--navy-dark) 0%, #2a5298 100%);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      border: 2px dashed rgba(255,255,255,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .video-embed-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .play-btn {
+      width: 72px;
+      height: 72px;
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .play-btn svg {
+      color: white;
+      margin-left: 4px;
+    }
+
+    .video-embed-placeholder .video-label {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.95rem;
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+    }
+
+    .video-caption {
+      text-align: center;
+      color: var(--gray);
+      font-size: 0.9rem;
+      margin-top: 16px;
+    }
+
+    /* ===== MY APPROACH ===== */
+    .approach-section {
+      background: var(--white);
+    }
+
+    .approach-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 52px;
+    }
+
+    .approach-card {
+      padding: 32px;
+      border-radius: var(--radius-lg);
+      background: var(--off-white);
+      border: 1px solid var(--gray-light);
+    }
+
+    .approach-number {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--gray-light);
+      line-height: 1;
+      margin-bottom: 14px;
+      font-family: var(--font-serif);
+    }
+
+    .approach-card h3 {
+      font-size: 1.1rem;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+
+    .approach-card p {
+      color: var(--gray);
+      font-size: 0.94rem;
+      line-height: 1.7;
+    }
+
+    /* ===== CTA STRIP ===== */
+    .about-cta {
+      background: linear-gradient(135deg, var(--navy) 0%, #2a5298 100%);
+      text-align: center;
+      padding: 80px 32px;
+    }
+
+    .about-cta h2 {
+      color: var(--white);
+      font-size: clamp(1.7rem, 3vw, 2.2rem);
+      margin-bottom: 16px;
+    }
+
+    .about-cta p {
+      color: rgba(255,255,255,0.8);
+      font-size: 1.05rem;
+      margin-bottom: 36px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .bio-inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+
+      .bio-photos {
+        position: static;
+      }
+
+      .stats-bar {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .approach-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .stats-bar {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="#1B3A6B"/>
+        <path d="M20 8L30 13.5V20C30 25.5 25.5 30.5 20 32C14.5 30.5 10 25.5 10 20V13.5L20 8Z" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M15.5 20L18.5 23L24.5 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="logo-text">Admit<span>U</span></div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+      <li><a href="how-it-works.html">How It Works</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="nav-cta btn">Get Started</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== PAGE HERO ===== -->
+<div class="page-hero">
+  <h1>About Me</h1>
+  <p>I'm passionate about helping students navigate one of the most important milestones of their lives — getting into the right college, at the right price.</p>
+</div>
+
+<!-- ===== BIO SECTION ===== -->
+<section class="bio-section">
+  <div class="container">
+    <div class="bio-inner">
+
+      <!-- Photos Column -->
+      <div class="bio-photos">
+        <!-- PHOTO 1: Replace with your photo -->
+        <div class="photo-placeholder bio-photo-main">
+          <!-- <img src="photos/photo1.jpg" alt="Your Name" /> -->
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Your Primary Photo</span>
+        </div>
+        <div class="bio-photos-row">
+          <!-- PHOTO 2 -->
+          <div class="photo-placeholder bio-photo-small">
+            <!-- <img src="photos/photo2.jpg" alt="Working with a student" /> -->
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Photo 2</span>
+          </div>
+          <!-- PHOTO 3 -->
+          <div class="photo-placeholder bio-photo-small">
+            <!-- <img src="photos/photo3.jpg" alt="On campus" /> -->
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Photo 3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bio Content -->
+      <div class="bio-content">
+        <div class="section-label">My Story</div>
+        <h2>Hi, I'm [Your Name]</h2>
+        <p class="subtitle-name">[Your Title / University / Major — e.g., Penn State University · Class of 20XX]</p>
+        <div class="bio-divider"></div>
+
+        <p>[Share your personal story here — why you're passionate about college admissions and financial aid. For example: "I remember the stress of applying to college and how overwhelming the process felt. When I discovered how much the right guidance could change outcomes, I knew I wanted to help other students navigate this process with confidence."]</p>
+
+        <p>[Tell students what makes you qualified. Mention any relevant experience, schools you've attended, students you've helped, or specific outcomes. For example: "Having successfully navigated the admissions process myself and helped dozens of students, I've developed a deep understanding of what admissions officers are really looking for — and how to maximize financial aid packages."]</p>
+
+        <p>[Add one more paragraph about your approach or philosophy — what makes working with you different from other tutors or services.]</p>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+          <div class="stat-item">
+            <div class="stat-number">XX+</div>
+            <div class="stat-label">Students Helped</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">$XXk</div>
+            <div class="stat-label">Avg. Aid Secured</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">XX%</div>
+            <div class="stat-label">Acceptance Rate</div>
+          </div>
+        </div>
+
+        <!-- Credentials -->
+        <div class="credentials">
+          <h4>Background &amp; Credentials</h4>
+          <ul class="credential-list">
+            <li>
+              <span class="cred-dot"></span>
+              <span>[Your university and degree — e.g., B.S. in Finance, Penn State University]</span>
+            </li>
+            <li>
+              <span class="cred-dot"></span>
+              <span>[Relevant experience — e.g., Helped 50+ students secure admission to top-25 universities]</span>
+            </li>
+            <li>
+              <span class="cred-dot"></span>
+              <span>[Financial aid expertise — e.g., Deep expertise in FAFSA, CSS Profile, and aid negotiation]</span>
+            </li>
+            <li>
+              <span class="cred-dot"></span>
+              <span>[Any other relevant credential, award, or achievement]</span>
+            </li>
+          </ul>
+        </div>
+
+        <div style="margin-top: 36px; display: flex; gap: 14px; flex-wrap: wrap;">
+          <a href="contact.html" class="btn btn-primary">Work With Me</a>
+          <a href="how-it-works.html" class="btn btn-outline">See How It Works</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== VIDEO SECTION ===== -->
+<section class="video-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">30-Second Promo</div>
+      <h2 class="section-title">See AdmitU in Action</h2>
+      <div class="divider"></div>
+      <p class="section-subtitle">Watch a quick 30-second overview of what AdmitU offers and how I help students get into their dream schools.</p>
+    </div>
+    <div class="video-wrapper">
+      <!--
+        ===== 30-SECOND PROMO VIDEO EMBED =====
+        Paste your embed code here. Replace the placeholder div below.
+
+        YouTube:
+        <iframe
+          width="100%"
+          style="aspect-ratio: 16/9; border-radius: 16px; border: none;"
+          src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+          title="AdmitU 30-second promo"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+
+        Vimeo:
+        <iframe
+          width="100%"
+          style="aspect-ratio: 16/9; border-radius: 16px; border: none;"
+          src="https://player.vimeo.com/video/YOUR_VIDEO_ID"
+          title="AdmitU 30-second promo"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      -->
+      <div class="video-embed-placeholder">
+        <div class="play-btn">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <div class="video-label">30-second promo video — embed yours here</div>
+      </div>
+      <p class="video-caption">Replace the placeholder above with your YouTube or Vimeo embed code.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MY APPROACH ===== -->
+<section class="approach-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">My Philosophy</div>
+      <h2 class="section-title">How I Approach Every Student</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="approach-grid">
+      <div class="approach-card">
+        <div class="approach-number">01</div>
+        <h3>Understand Your Story</h3>
+        <p>Every student has a unique background, strengths, and goals. I take the time to understand who you are before we ever touch a single essay — because the best applications tell authentic stories.</p>
+      </div>
+      <div class="approach-card">
+        <div class="approach-number">02</div>
+        <h3>Build a Smart School List</h3>
+        <p>I help you build a balanced, thoughtful school list — one that matches your academic profile, financial expectations, and personal fit — so every application is a realistic shot at a great outcome.</p>
+      </div>
+      <div class="approach-card">
+        <div class="approach-number">03</div>
+        <h3>Craft a Compelling Application</h3>
+        <p>From the Common App essay to supplements and activity descriptions, I help you present your best self in every part of your application — clearly, authentically, and memorably.</p>
+      </div>
+      <div class="approach-card">
+        <div class="approach-number">04</div>
+        <h3>Maximize Your Aid</h3>
+        <p>Getting in is just step one. I work with you to understand your financial aid package, identify appeal opportunities, and find scholarships that can meaningfully reduce your cost of attendance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="about-cta">
+  <div class="section-label" style="color: var(--gold-light);">Ready to Start?</div>
+  <h2>Let's Work Together</h2>
+  <p>Book a free 30-minute consultation and let's talk about how I can help you reach your college goals.</p>
+  <a href="contact.html" class="btn btn-gold btn-lg">Book Your Free Consult</a>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">
+          <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="10" fill="#C9A84C"/>
+            <path d="M20 8L30 13.5V20C30 25.5 25.5 30.5 20 32C14.5 30.5 10 25.5 10 20V13.5L20 8Z" fill="none" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M15.5 20L18.5 23L24.5 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="logo-text">Admit<span>U</span></div>
+        </a>
+        <p>Expert college admissions and financial aid tutoring — in person or AI-powered, on your schedule.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="how-it-works.html">How It Works</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">Essay Coaching</a></li>
+          <li><a href="#">AI Essay Review</a></li>
+          <li><a href="#">Financial Aid Strategy</a></li>
+          <li><a href="#">Full Package</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 AdmitU. All rights reserved.</p>
+      <p>Built to help students achieve their college dreams.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
