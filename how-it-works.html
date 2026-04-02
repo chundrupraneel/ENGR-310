@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How It Works — AdmitU</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    .coming-soon {
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 32px;
+      background: var(--off-white);
+    }
+
+    .coming-soon-inner {
+      max-width: 520px;
+    }
+
+    .coming-soon-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--navy), #2a5298);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+    }
+
+    .coming-soon h2 {
+      font-size: 2rem;
+      color: var(--navy);
+      margin-bottom: 14px;
+    }
+
+    .coming-soon p {
+      color: var(--gray);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="#1B3A6B"/>
+        <path d="M20 8L30 13.5V20C30 25.5 25.5 30.5 20 32C14.5 30.5 10 25.5 10 20V13.5L20 8Z" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M15.5 20L18.5 23L24.5 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="logo-text">Admit<span>U</span></div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="how-it-works.html" class="active">How It Works</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="nav-cta btn">Get Started</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== PAGE HERO ===== -->
+<div class="page-hero">
+  <h1>How It Works</h1>
+  <p>Learn exactly how the AdmitU process works — from your first consultation to your final application.</p>
+</div>
+
+<!-- ===== CONTENT PLACEHOLDER ===== -->
+<div class="coming-soon">
+  <div class="coming-soon-inner">
+    <div class="coming-soon-icon">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+    </div>
+    <h2>Content Coming Soon</h2>
+    <p>This page is being built out. Check back soon for a full walkthrough of the AdmitU process — from your first consultation to your final application submission.</p>
+    <a href="contact.html" class="btn btn-primary">Contact Me in the Meantime</a>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">
+          <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="10" fill="#C9A84C"/>
+            <path d="M20 8L30 13.5V20C30 25.5 25.5 30.5 20 32C14.5 30.5 10 25.5 10 20V13.5L20 8Z" fill="none" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M15.5 20L18.5 23L24.5 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="logo-text">Admit<span>U</span></div>
+        </a>
+        <p>Expert college admissions and financial aid tutoring — in person or AI-powered, on your schedule.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="how-it-works.html">How It Works</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">Essay Coaching</a></li>
+          <li><a href="#">AI Essay Review</a></li>
+          <li><a href="#">Financial Aid Strategy</a></li>
+          <li><a href="#">Full Package</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 AdmitU. All rights reserved.</p>
+      <p>Built to help students achieve their college dreams.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
