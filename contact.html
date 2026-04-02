@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — AdmitU</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== CONTACT LAYOUT ===== */
+    .contact-section {
+      background: var(--off-white);
+      padding-top: 80px;
+    }
+
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    /* Info column */
+    .contact-info {
+      position: sticky;
+      top: 90px;
+    }
+
+    .contact-info .section-label {
+      margin-bottom: 10px;
+    }
+
+    .contact-info h2 {
+      font-size: clamp(1.9rem, 3vw, 2.4rem);
+      color: var(--navy);
+      margin-bottom: 16px;
+    }
+
+    .contact-info > p {
+      color: var(--gray);
+      font-size: 1rem;
+      line-height: 1.75;
+      margin-bottom: 36px;
+    }
+
+    .contact-details {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .contact-detail-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .contact-detail-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--navy), #2a5298);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .contact-detail-icon svg {
+      color: white;
+    }
+
+    .contact-detail-text strong {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--gray);
+      margin-bottom: 3px;
+    }
+
+    .contact-detail-text span {
+      font-size: 0.98rem;
+      color: var(--gray-dark);
+    }
+
+    .contact-detail-text a {
+      color: var(--navy);
+      font-weight: 500;
+    }
+
+    .contact-detail-text a:hover {
+      color: var(--gold);
+    }
+
+    /* Social links */
+    .social-links {
+      display: flex;
+      gap: 12px;
+    }
+
+    .social-btn {
+      width: 44px;
+      height: 44px;
+      background: var(--white);
+      border: 1px solid var(--gray-light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      color: var(--gray-dark);
+    }
+
+    .social-btn:hover {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+
+    /* What to expect box */
+    .expect-box {
+      background: linear-gradient(135deg, var(--navy-dark) 0%, #1e4080 100%);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      color: rgba(255,255,255,0.85);
+      margin-top: 36px;
+    }
+
+    .expect-box h4 {
+      color: var(--gold);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+
+    .expect-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .expect-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.93rem;
+      line-height: 1.5;
+    }
+
+    .expect-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 7px;
+    }
+
+    /* Form column */
+    .contact-form-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 44px 40px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--gray-light);
+    }
+
+    .contact-form-card h3 {
+      font-size: 1.3rem;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .contact-form-card > p {
+      color: var(--gray);
+      font-size: 0.95rem;
+      margin-bottom: 32px;
+    }
+
+    #contactForm {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-submit {
+      margin-top: 8px;
+    }
+
+    .form-submit .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    #contactSuccess {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, #10B981, #059669);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    #contactSuccess h3 {
+      font-size: 1.5rem;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+
+    #contactSuccess p {
+      color: var(--gray);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    /* ===== FAQ SECTION ===== */
+    .faq-section {
+      background: var(--white);
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 52px;
+    }
+
+    .faq-item {
+      background: var(--off-white);
+      border-radius: var(--radius);
+      padding: 28px;
+      border: 1px solid var(--gray-light);
+    }
+
+    .faq-item h4 {
+      font-size: 1rem;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+
+    .faq-item p {
+      font-size: 0.93rem;
+      color: var(--gray);
+      line-height: 1.7;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .contact-inner {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .contact-info {
+        position: static;
+      }
+
+      .faq-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-form-card {
+        padding: 32px 24px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="#1B3A6B"/>
+        <path d="M20 8L30 13.5V20C30 25.5 25.5 30.5 20 32C14.5 30.5 10 25.5 10 20V13.5L20 8Z" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M15.5 20L18.5 23L24.5 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="logo-text">Admit<span>U</span></div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="how-it-works.html">How It Works</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+      <li><a href="contact.html" class="nav-cta btn">Get Started</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== PAGE HERO ===== -->
+<div class="page-hero">
+  <h1>Get in Touch</h1>
+  <p>Have questions or ready to get started? I'd love to hear from you. Reach out and I'll get back to you within 24 hours.</p>
+</div>
+
+<!-- ===== CONTACT SECTION ===== -->
+<section class="contact-section">
+  <div class="container">
+    <div class="contact-inner">
+
+      <!-- Info Column -->
+      <div class="contact-info">
+        <img src="https://drive.google.com/uc?export=view&id=1rnQGxsc4WG10nc3bP1GvhQ1U7rhDaTtb" alt="Praneel" style="width:100%; max-height:280px; object-fit:cover; border-radius:var(--radius-lg); box-shadow:var(--shadow-md); margin-bottom:28px; display:block;" />
+        <div class="section-label">Contact</div>
+        <h2>Let's Start Your Journey</h2>
+        <p>Whether you're a rising junior starting to research schools, a senior in the thick of applications, or a family navigating financial aid — reach out and let's talk about how I can help.</p>
+
+        <div class="contact-details">
+          <div class="contact-detail-item">
+            <div class="contact-detail-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div class="contact-detail-text">
+              <strong>Email</strong>
+              <a href="mailto:chundrupraneel@gmail.com">chundrupraneel@gmail.com</a>
+            </div>
+          </div>
+          <div class="contact-detail-item">
+            <div class="contact-detail-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.62 4.38 2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div class="contact-detail-text">
+              <strong>Phone</strong>
+              <a href="tel:+14129004440">412-900-4440</a>
+            </div>
+          </div>
+          <div class="contact-detail-item">
+            <div class="contact-detail-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="contact-detail-text">
+              <strong>Response Time</strong>
+              <span>Within 24 hours, typically same day</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Links -->
+        <div class="social-links">
+          <!-- Replace hrefs with your actual social links -->
+          <a href="#" class="social-btn" title="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="#" class="social-btn" title="LinkedIn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="#" class="social-btn" title="TikTok">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+          </a>
+        </div>
+
+        <div class="expect-box">
+          <h4>What to Expect After You Submit</h4>
+          <ul class="expect-list">
+            <li><span class="expect-dot"></span><span>I'll reply within 24 hours to schedule a free 30-minute consultation</span></li>
+            <li><span class="expect-dot"></span><span>We'll talk through your timeline, goals, and how I can best help</span></li>
+            <li><span class="expect-dot"></span><span>No pressure — the consultation is 100% free with no obligation</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Form Column -->
+      <div class="contact-form-card">
+        <h3>Send Me a Message</h3>
+        <p>Fill out the form below and I'll get back to you as soon as possible.</p>
+
+        <form id="contactForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name *</label>
+              <input type="text" id="firstName" name="firstName" placeholder="Jane" required autocomplete="given-name" />
+              <span class="field-error" role="alert"></span>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name *</label>
+              <input type="text" id="lastName" name="lastName" placeholder="Smith" required autocomplete="family-name" />
+              <span class="field-error" role="alert"></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" placeholder="jane@example.com" required autocomplete="email" />
+            <span class="field-error" role="alert"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="(555) 555-5555" autocomplete="tel" />
+          </div>
+
+          <div class="form-group">
+            <label for="grade">Current Grade / Year</label>
+            <select id="grade" name="grade">
+              <option value="" disabled selected>Select your grade...</option>
+              <option value="sophomore">10th Grade (Sophomore)</option>
+              <option value="junior">11th Grade (Junior)</option>
+              <option value="senior">12th Grade (Senior)</option>
+              <option value="parent">Parent / Guardian</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="service">What are you interested in?</label>
+            <select id="service" name="service">
+              <option value="" disabled selected>Select a service...</option>
+              <option value="essay">Essay Coaching (1-on-1)</option>
+              <option value="ai-review">AI Application Review</option>
+              <option value="financial-aid">Financial Aid Strategy</option>
+              <option value="full-package">Full Admissions Package</option>
+              <option value="unsure">Not sure yet — just exploring</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Message *</label>
+            <textarea id="message" name="message" placeholder="Tell me a bit about where you are in the process, your target schools, and what you're hoping to get help with..." required></textarea>
+            <span class="field-error" role="alert"></span>
+          </div>
+
+          <div class="form-submit">
+            <button type="submit" class="btn btn-primary btn-lg">Send Message</button>
+          </div>
+        </form>
+
+        <div id="contactSuccess">
+          <div class="success-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h3>Message Received!</h3>
+          <p>Thank you for reaching out. I'll get back to you within 24 hours to schedule your free consultation.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="faq-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">Common Questions</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <h4>How soon should I start working with you?</h4>
+        <p>The earlier, the better — but it's never too late. Junior year is ideal for essay brainstorming and school list building. Seniors can still benefit significantly from targeted support.</p>
+      </div>
+      <div class="faq-item">
+        <h4>What's the difference between the AI tool and 1-on-1 sessions?</h4>
+        <p>1-on-1 sessions offer personalized guidance, real-time conversation, and strategic planning. The AI tool delivers detailed instant feedback on your essays and application when you can't meet in person.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Do you work with students outside of Pittsburgh?</h4>
+        <p>Yes! All sessions can be conducted virtually via video call. The AI tool is fully online and available anywhere, any time.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Can you help with financial aid even after we receive award letters?</h4>
+        <p>Absolutely. I specialize in helping families understand and appeal financial aid offers — many students leave significant money on the table because they don't know they can negotiate.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How many students do you work with at a time?</h4>
+        <p>I keep my client load intentionally small to ensure every student gets the personalized attention they deserve. Spots are limited, so I encourage you to reach out early.</p>
+      </div>
+      <div class="faq-item">
+        <h4>What does the free consultation include?</h4>
+        <p>A 30-minute call to discuss your goals, timeline, and current situation. I'll share my honest assessment of where you stand and how I can best help — no sales pressure, just genuine guidance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">
+          <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="10" fill="#C9A84C"/>
+            <path d="M20 8L30 13.5V20C30 25.5 25.5 30.5 20 32C14.5 30.5 10 25.5 10 20V13.5L20 8Z" fill="none" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M15.5 20L18.5 23L24.5 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="logo-text">Admit<span>U</span></div>
+        </a>
+        <p>Expert college admissions and financial aid tutoring — in person or AI-powered, on your schedule.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="how-it-works.html">How It Works</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">Essay Coaching</a></li>
+          <li><a href="#">AI Essay Review</a></li>
+          <li><a href="#">Financial Aid Strategy</a></li>
+          <li><a href="#">Full Package</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 AdmitU. All rights reserved.</p>
+      <p>Built to help students achieve their college dreams.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
