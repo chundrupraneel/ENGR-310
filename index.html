@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AdmitU — College Admissions & Financial Aid Tutoring</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(160deg, var(--navy-dark) 0%, #1e4080 55%, #2a5298 100%);
+      display: flex;
+      align-items: center;
+      padding: 110px 32px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-content .badge {
+      margin-bottom: 24px;
+    }
+
+    .hero-content h1 {
+      font-size: clamp(2.4rem, 4.5vw, 3.4rem);
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 22px;
+      font-weight: 800;
+    }
+
+    .hero-content h1 span {
+      color: var(--gold);
+    }
+
+    .hero-content p {
+      font-size: 1.15rem;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.75;
+      margin-bottom: 36px;
+      max-width: 480px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hero-photo-single {
+      width: 100%;
+      height: 460px;
+      border-radius: var(--radius-lg);
+      border-color: rgba(255,255,255,0.2);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    }
+
+    /* ===== VALUE PROPS ===== */
+    .value-props {
+      background: var(--off-white);
+    }
+
+    .value-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .value-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 36px 30px;
+      border: 1px solid var(--gray-light);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      text-align: center;
+    }
+
+    .value-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-4px);
+    }
+
+    .value-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--navy), #2a5298);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 22px;
+    }
+
+    .value-icon svg {
+      color: var(--white);
+    }
+
+    .value-card h3 {
+      font-size: 1.15rem;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+
+    .value-card p {
+      color: var(--gray);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    /* ===== AI FEATURE ===== */
+    .ai-feature {
+      background: var(--white);
+    }
+
+    .ai-feature-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: center;
+    }
+
+    .ai-feature-visual {
+      background: linear-gradient(135deg, #f0f5ff 0%, #e8f0fe 100%);
+      border-radius: var(--radius-lg);
+      padding: 40px 36px;
+      border: 1px solid rgba(27,58,107,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ai-chat-bubble {
+      background: var(--white);
+      border-radius: 12px 12px 12px 2px;
+      padding: 14px 18px;
+      font-size: 0.92rem;
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 12px;
+      max-width: 85%;
+      line-height: 1.6;
+    }
+
+    .ai-chat-bubble.response {
+      background: var(--navy);
+      color: var(--white);
+      border-radius: 12px 12px 2px 12px;
+      margin-left: auto;
+    }
+
+    .ai-chat-bubble .bubble-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+      opacity: 0.6;
+    }
+
+    .ai-feature-content .section-subtitle {
+      margin-bottom: 28px;
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.97rem;
+      color: var(--gray-dark);
+    }
+
+    .check-icon {
+      width: 22px;
+      height: 22px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    /* ===== SERVICES ===== */
+    .services {
+      background: var(--off-white);
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .service-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      border: 1px solid var(--gray-light);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    .service-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: rgba(27,58,107,0.2);
+      transform: translateY(-2px);
+    }
+
+    .service-tag {
+      display: inline-block;
+      background: rgba(27,58,107,0.08);
+      color: var(--navy);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+    }
+
+    .service-card h3 {
+      font-size: 1.2rem;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+
+    .service-card p {
+      color: var(--gray);
+      font-size: 0.94rem;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .service-price {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    /* ===== EMAIL CAPTURE ===== */
+    .email-capture {
+      background: linear-gradient(135deg, var(--navy) 0%, #2a5298 100%);
+      text-align: center;
+    }
+
+    .email-capture h2 {
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      color: var(--white);
+      margin-bottom: 14px;
+    }
+
+    .email-capture > .container > p {
+      color: rgba(255,255,255,0.82);
+      font-size: 1.08rem;
+      margin-bottom: 40px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .email-form-wrapper {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    #email-form {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    #email-form input[type="email"] {
+      flex: 1;
+      min-width: 240px;
+      padding: 14px 18px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: var(--font-sans);
+      outline: none;
+    }
+
+    #success-message {
+      display: none;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 12px;
+      padding: 24px 32px;
+      color: var(--white);
+      font-size: 1.05rem;
+    }
+
+    #success-message strong {
+      display: block;
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+    }
+
+    .privacy-note {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.55);
+      margin-top: 14px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+        text-align: center;
+      }
+
+      .hero-content p,
+      .hero-content .badge {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .ai-feature-inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+
+      .value-grid {
+        grid-template-columns: 1fr;
+        max-width: 440px;
+        margin: 0 auto;
+      }
+
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <!-- Logo SVG -->
+      <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="#1B3A6B"/>
+        <path d="M20 8L30 13.5V20C30 25.5 25.5 30.5 20 32C14.5 30.5 10 25.5 10 20V13.5L20 8Z" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M15.5 20L18.5 23L24.5 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="logo-text">Admit<span>U</span></div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="how-it-works.html">How It Works</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="essay-review.html" style="color:var(--gold);font-weight:700;">Essay Review ✦</a></li>
+      <li><a href="contact.html" class="nav-cta btn">Get Started</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        College Admissions &amp; Financial Aid Expert
+      </div>
+      <h1>Get Into Your <span>Dream College</span> — With Expert Guidance</h1>
+      <p>Personal 1-on-1 tutoring plus AI-powered essay analysis. Whether you meet with me or use the AI tool, you'll have an expert edge throughout the entire admissions process.</p>
+      <div class="hero-actions">
+        <a href="contact.html" class="btn btn-gold btn-lg">Book a Free Consult</a>
+        <a href="how-it-works.html" class="btn btn-outline-white btn-lg">See How It Works</a>
+      </div>
+    </div>
+    <div class="hero-photo-single" style="border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.3);">
+      <img src="https://drive.google.com/thumbnail?id=1Ws6dzIcmuLrN19EKeKLBEp7PaQx6CZ6E&sz=w1200" alt="Praneel" style="width:100%; height:100%; object-fit:cover; object-position:top center; display:block;" />
+    </div>
+  </div>
+</section>
+
+<!-- ===== VALUE PROPOSITIONS ===== -->
+<section class="value-props">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label">Why AdmitU</div>
+      <h2 class="section-title">Everything You Need to Succeed</h2>
+      <div class="divider"></div>
+      <p class="section-subtitle">From crafting your story to maximizing your financial aid, I guide you every step of the way.</p>
+    </div>
+    <div class="value-grid">
+      <div class="value-card fade-in">
+        <div class="value-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>1-on-1 Expert Tutoring</h3>
+        <p>Work directly with an expert who knows the college admissions and financial aid process inside and out — personalized sessions built around your unique story and goals.</p>
+      </div>
+      <div class="value-card fade-in">
+        <div class="value-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+        </div>
+        <h3>AI Essay Analysis</h3>
+        <p>Can't meet in person? Our AI tool analyzes your essays and application in minutes — providing detailed feedback on structure, tone, authenticity, and admissions impact.</p>
+      </div>
+      <div class="value-card fade-in">
+        <div class="value-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <h3>Financial Aid Maximization</h3>
+        <p>Learn how to navigate FAFSA, appeal award letters, and identify scholarships that match your profile — so you attend your dream school without the financial stress.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AI FEATURE ===== -->
+<section class="ai-feature">
+  <div class="container">
+    <div class="ai-feature-inner">
+      <div class="ai-feature-visual fade-in">
+        <div class="ai-chat-bubble">
+          <div class="bubble-label">You</div>
+          "Can you review my Common App essay? I'm worried it doesn't stand out."
+        </div>
+        <div class="ai-chat-bubble response">
+          <div class="bubble-label">AI Analysis</div>
+          Your opening hook is strong, but the third paragraph shifts tone. Here are 3 specific revisions to make your story more compelling to admissions readers...
+        </div>
+        <div class="ai-chat-bubble">
+          <div class="bubble-label">You</div>
+          "Also, can you check if my activities list is competitive for UPenn?"
+        </div>
+        <div class="ai-chat-bubble response">
+          <div class="bubble-label">AI Analysis</div>
+          Based on your profile, here are the top 3 activities to emphasize and 2 gaps to address before submitting...
+        </div>
+      </div>
+      <div class="ai-feature-content fade-in">
+        <div class="section-label">AI-Powered Tool</div>
+        <h2 class="section-title">Expert Feedback, Instantly Available</h2>
+        <div class="divider divider-left"></div>
+        <p class="section-subtitle">No time to schedule a session? Our AI tool gives you the same level of detailed, actionable feedback — available 24/7.</p>
+        <ul class="feature-list">
+          <li>
+            <div class="check-icon">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg>
+            </div>
+            Essay structure, voice, and storytelling analysis
+          </li>
+          <li>
+            <div class="check-icon">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg>
+            </div>
+            Application strength scoring by target school
+          </li>
+          <li>
+            <div class="check-icon">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg>
+            </div>
+            Financial aid strategy recommendations
+          </li>
+          <li>
+            <div class="check-icon">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg>
+            </div>
+            Activities list optimization and gap analysis
+          </li>
+          <li>
+            <div class="check-icon">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg>
+            </div>
+            Detailed, revision-ready feedback within minutes
+          </li>
+        </ul>
+        <div style="margin-top: 32px;">
+          <a href="how-it-works.html" class="btn btn-primary">See How the AI Works</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SERVICES ===== -->
+<section class="services">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label">Services</div>
+      <h2 class="section-title">Choose What Works For You</h2>
+      <div class="divider"></div>
+      <p class="section-subtitle">Whether you prefer personal guidance or instant AI feedback, we have an option that fits your needs and schedule.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card fade-in">
+        <div class="service-tag">1-on-1</div>
+        <h3>Essay Coaching Session</h3>
+        <p>Personalized sessions to brainstorm, draft, and refine your Common App, supplements, and scholarship essays. We'll craft a narrative that authentically represents you.</p>
+        <div class="service-price">Starting at $50 / session</div>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-tag">AI Tool</div>
+        <h3>AI Application Review</h3>
+        <p>Upload your essays, activities list, and stats. Receive a comprehensive analysis covering every element of your application with prioritized action items.</p>
+        <div class="service-price">Starting at $60 / review</div>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-tag">1-on-1</div>
+        <h3>Financial Aid Strategy</h3>
+        <p>Navigate the FAFSA, CSS Profile, and aid negotiation process with expert guidance. Learn how to appeal award letters and find hidden scholarship opportunities.</p>
+        <div class="service-price">Starting at $30 / session</div>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-tag">Full Package</div>
+        <h3>Complete Admissions Package</h3>
+        <p>A comprehensive program combining regular 1-on-1 sessions, unlimited AI reviews, school list strategy, and full financial aid planning from start to submission.</p>
+        <div class="service-price">Custom pricing — contact for details</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== EMAIL CAPTURE ===== -->
+<section class="email-capture">
+  <div class="container">
+    <div class="section-label" style="color: var(--gold-light);">Free Resource</div>
+    <h2>Get My Free College Admissions Checklist</h2>
+    <p>Join hundreds of students who've used my step-by-step checklist to stay organized and stress-free through the entire application season.</p>
+    <div class="email-form-wrapper">
+      <form id="email-form">
+        <input type="email" id="email-input" placeholder="Enter your email address" required autocomplete="email" />
+        <button type="submit" class="btn btn-gold btn-lg">Send It to Me</button>
+      </form>
+      <div id="success-message">
+        <strong>You're all set!</strong>
+        Check your inbox — your free checklist is on its way.
+      </div>
+      <p class="privacy-note">No spam, ever. Unsubscribe at any time.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">
+          <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="10" fill="#C9A84C"/>
+            <path d="M20 8L30 13.5V20C30 25.5 25.5 30.5 20 32C14.5 30.5 10 25.5 10 20V13.5L20 8Z" fill="none" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M15.5 20L18.5 23L24.5 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="logo-text">Admit<span>U</span></div>
+        </a>
+        <p>Expert college admissions and financial aid tutoring — in person or AI-powered, on your schedule.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="how-it-works.html">How It Works</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">Essay Coaching</a></li>
+          <li><a href="essay-review.html">AI Essay Review</a></li>
+          <li><a href="#">Financial Aid Strategy</a></li>
+          <li><a href="#">Full Package</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 AdmitU. All rights reserved.</p>
+      <p>Built to help students achieve their college dreams.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+<script>
+  const { createClient } = supabase;
+  const supabaseClient = createClient(
+    'https://lscyjlstblsdlvogpvgm.supabase.co',
+    'sb_publishable_TYV7nKo78-ixv1l9cVbNIg_HQ7yXtvx'
+  );
+
+  document.getElementById('email-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    const email = document.getElementById('email-input').value;
+
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+
+    const { error } = await supabaseClient
+      .from('subscribers')
+      .insert([{ email }]);
+
+    if (error) {
+      alert('Something went wrong. Please try again.');
+      console.error(error);
+      btn.textContent = 'Send It to Me';
+      btn.disabled = false;
+    } else {
+      document.getElementById('email-form').style.display = 'none';
+      document.getElementById('success-message').style.display = 'block';
+    }
+  });
+</script>
+</body>
+</html>
