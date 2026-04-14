@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Essay Review — AdmitU Premium</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- PDF.js for extracting text from uploaded PDFs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <style>
+    /* ===== PAYWALL OVERLAY ===== */
+    #paywallOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(160deg, var(--navy-dark) 0%, #1e4080 55%, #2a5298 100%);
+    }
+
+    .paywall-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 52px 44px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+    }
+
+    .paywall-icon {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, var(--navy), #2a5298);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    .paywall-card h2 {
+      font-size: 1.75rem;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+
+    .paywall-card .paywall-sub {
+      color: var(--gray);
+      font-size: 1rem;
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+
+    /* Google button */
+    .paywall-google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 13px 20px;
+      border: 2px solid var(--gray-light);
+      border-radius: 10px;
+      background: var(--white);
+      font-size: 0.97rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: var(--font-sans);
+      margin-bottom: 16px;
+    }
+    .paywall-google-btn:hover {
+      border-color: rgba(27,58,107,0.4);
+      background: var(--off-white);
+    }
+
+    /* "or" separator */
+    .paywall-or {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      color: var(--gray);
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+    .paywall-or::before, .paywall-or::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--gray-light);
+    }
+
+    /* Inline email/password form */
+    .paywall-auth-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .paywall-auth-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--gray-light);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: var(--font-sans);
+      outline: none;
+      transition: border-color 0.2s ease;
+      box-sizing: border-box;
+      color: var(--text);
+    }
+    .paywall-auth-input:focus { border-color: var(--navy); }
+
+    .paywall-auth-links {
+      font-size: 0.83rem;
+      color: var(--gray);
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    .paywall-auth-links a {
+      color: var(--navy);
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    .paywall-auth-error {
+      display: none;
+      background: #fff0f0;
+      border: 1px solid #f5c6c6;
+      color: #c0392b;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      margin-top: 6px;
+    }
+
+    .paywall-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+      color: var(--gray);
+      font-size: 0.85rem;
+    }
+
+    .paywall-divider::before,
+    .paywall-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--gray-light);
+    }
+
+    .paywall-features {
+      list-style: none;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .paywall-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.93rem;
+      color: var(--gray-dark);
+    }
+
+    .paywall-features .feat-check {
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .paywall-note {
+      font-size: 0.82rem;
+      color: var(--gray);
+      margin-top: 16px;
+    }
+
+    .paywall-note a {
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    /* ===== TOOL LAYOUT ===== */
+    #toolSection {
+      display: none;
+    }
+
+    .tool-section {
+      background: var(--off-white);
+      padding: 80px 32px;
+    }
+
+    .tool-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .tool-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .pro-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: var(--white);
+      border-radius: 100px;
+      padding: 4px 14px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+    }
+
+    /* ===== INPUT CARD ===== */
+    .input-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      border: 1px solid var(--gray-light);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 28px;
+    }
+
+    .input-card h3 {
+      font-size: 1.2rem;
+      color: var(--navy);
+      margin-bottom: 24px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    /* ===== INPUT TOGGLE ===== */
+    .input-toggle {
+      display: flex;
+      gap: 0;
+      border: 2px solid var(--gray-light);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      padding: 11px 16px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--gray);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .toggle-btn.active {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    /* ===== ESSAY TEXTAREA ===== */
+    #essayText {
+      width: 100%;
+      min-height: 280px;
+      padding: 16px 18px;
+      border: 2px solid var(--gray-light);
+      border-radius: 12px;
+      font-size: 0.97rem;
+      font-family: var(--font-sans);
+      color: var(--text);
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s ease;
+      line-height: 1.7;
+    }
+
+    #essayText:focus {
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(27,58,107,0.08);
+    }
+
+    .word-counter {
+      text-align: right;
+      font-size: 0.83rem;
+      color: var(--gray);
+      margin-top: 8px;
+    }
+
+    .word-counter.warning { color: #F59E0B; }
+    .word-counter.over { color: #EF4444; }
+    .word-counter.good { color: #10B981; }
+
+    /* ===== PDF UPLOAD ===== */
+    #pdfUploadZone {
+      display: none;
+    }
+
+    .upload-zone {
+      border: 2px dashed #c4cfe0;
+      border-radius: 14px;
+      padding: 48px 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      background: #f8faff;
+      position: relative;
+    }
+
+    .upload-zone:hover,
+    .upload-zone.dragover {
+      border-color: var(--navy);
+      background: rgba(27,58,107,0.04);
+    }
+
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .upload-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--off-white);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      border: 1px solid var(--gray-light);
+    }
+
+    .upload-zone h4 {
+      font-size: 1rem;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .upload-zone p {
+      font-size: 0.88rem;
+      color: var(--gray);
+    }
+
+    #pdfStatus {
+      margin-top: 14px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: none;
+    }
+
+    #pdfStatus.success { color: #10B981; }
+    #pdfStatus.error { color: #EF4444; }
+
+    /* ===== SUBMIT ===== */
+    .submit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    .submit-note {
+      font-size: 0.85rem;
+      color: var(--gray);
+    }
+
+    /* ===== LOADING ===== */
+    #loadingState {
+      display: none;
+      text-align: center;
+      padding: 64px 32px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--gray-light);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .loading-pulse {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--navy), #2a5298);
+      margin: 0 auto 24px;
+      position: relative;
+      animation: pulse 1.8s ease-in-out infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(27,58,107,0.5); }
+      50% { box-shadow: 0 0 0 20px rgba(27,58,107,0); }
+    }
+
+    .loading-steps {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 300px;
+      margin: 24px auto 0;
+      text-align: left;
+    }
+
+    .loading-steps li {
+      font-size: 0.9rem;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: color 0.3s ease;
+    }
+
+    .loading-steps li.active {
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    .loading-steps li.done {
+      color: #10B981;
+    }
+
+    .step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gray-light);
+      flex-shrink: 0;
+      transition: background 0.3s ease;
+    }
+
+    .loading-steps li.active .step-dot { background: var(--navy); }
+    .loading-steps li.done .step-dot { background: #10B981; }
+
+    /* ===== RESULTS ===== */
+    #resultsSection {
+      display: none;
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .results-header h2 {
+      font-size: 1.6rem;
+      color: var(--navy);
+    }
+
+    .score-display {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .score-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: conic-gradient(var(--navy) calc(var(--pct) * 1%), var(--gray-light) 0%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .score-inner {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .score-num {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1;
+    }
+
+    .score-denom {
+      font-size: 0.65rem;
+      color: var(--gray);
+      font-weight: 500;
+    }
+
+    .score-label {
+      font-size: 0.9rem;
+      color: var(--gray);
+    }
+
+    .score-label strong {
+      display: block;
+      font-size: 1.05rem;
+      color: var(--navy);
+    }
+
+    /* Result cards */
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .result-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      border: 1px solid var(--gray-light);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .result-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .result-card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .result-card-icon.green { background: rgba(16,185,129,0.1); }
+    .result-card-icon.amber { background: rgba(245,158,11,0.1); }
+    .result-card-icon.navy { background: rgba(27,58,107,0.08); }
+
+    .result-card h4 {
+      font-size: 0.97rem;
+      color: var(--navy);
+    }
+
+    .result-items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .result-items li {
+      font-size: 0.91rem;
+      color: var(--gray-dark);
+      line-height: 1.6;
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .result-items li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .strengths-list li::before { background: #10B981; }
+    .improvements-list li::before { background: #F59E0B; }
+
+    .suggestions-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      border: 1px solid var(--gray-light);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+
+    .suggestions-card > h4 {
+      font-size: 0.97rem;
+      color: var(--navy);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .suggestion-item {
+      border: 1px solid var(--gray-light);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 12px;
+    }
+
+    .suggestion-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .suggestion-type {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+
+    .suggestion-text {
+      font-size: 0.9rem;
+      color: var(--gray-dark);
+      line-height: 1.6;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .stat-chip {
+      background: var(--white);
+      border: 1px solid var(--gray-light);
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-chip .stat-val {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .stat-chip .stat-lbl {
+      font-size: 0.78rem;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .results-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    /* Saved banner */
+    #reviewSavedBanner {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: #f0fff4;
+      border: 1px solid #9ae6b4;
+      color: #276749;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      margin-top: 20px;
+    }
+    #reviewSavedBanner svg { flex-shrink: 0; }
+    #reviewSavedBanner a {
+      color: var(--navy);
+      font-weight: 700;
+      text-decoration: underline;
+      margin-left: auto;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 700px) {
+      .paywall-card { padding: 36px 28px; }
+      .meta-grid { grid-template-columns: 1fr; }
+      .results-grid { grid-template-columns: 1fr; }
+      .input-card { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="#1B3A6B"/>
+        <path d="M20 8L30 13.5V20C30 25.5 25.5 30.5 20 32C14.5 30.5 10 25.5 10 20V13.5L20 8Z" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M15.5 20L18.5 23L24.5 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="logo-text">Admit<span>U</span></div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="how-it-works.html">How It Works</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="essay-review.html" class="active" style="color:var(--gold)!important;font-weight:700;">Essay Review ✦</a></li>
+      <li id="nav-auth-item"></li>
+      <li id="nav-get-started"><a href="contact.html" class="nav-cta btn">Get Started</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== PAYWALL OVERLAY ===== -->
+<div id="paywallOverlay">
+  <div class="paywall-card">
+    <div class="paywall-icon">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+    </div>
+    <h2>Sign In to Access</h2>
+    <p class="paywall-sub">Create a free account or sign in to unlock the AI Essay Review tool — no code needed.</p>
+
+    <!-- Google OAuth -->
+    <button class="paywall-google-btn" id="paywallGoogleBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      Continue with Google
+    </button>
+
+    <div class="paywall-or">or sign in with email</div>
+
+    <form id="paywallEmailForm" novalidate>
+      <div class="paywall-auth-fields">
+        <input type="email" id="paywallEmail" placeholder="Email address"
+               required autocomplete="email" class="paywall-auth-input" />
+        <input type="password" id="paywallPwd" placeholder="Password"
+               required autocomplete="current-password" class="paywall-auth-input" />
+        <button type="submit" class="btn btn-primary" id="paywallSigninBtn" style="width:100%">
+          Sign In
+        </button>
+      </div>
+      <p class="paywall-auth-links">
+        New here? <a href="login.html?next=essay-review.html">Create a free account</a>
+      </p>
+      <div class="paywall-auth-error" id="paywallAuthError"></div>
+    </form>
+
+    <div class="paywall-divider">What's included</div>
+
+    <ul class="paywall-features">
+      <li>
+        <div class="feat-check"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg></div>
+        Unlimited essay analyses — Common App, supplements, scholarships
+      </li>
+      <li>
+        <div class="feat-check"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg></div>
+        PDF upload or paste — any format accepted
+      </li>
+      <li>
+        <div class="feat-check"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg></div>
+        Detailed scoring, cliché detection, and specific line edits
+      </li>
+      <li>
+        <div class="feat-check"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg></div>
+        School-specific fit analysis and strategic recommendations
+      </li>
+    </ul>
+
+    <p class="paywall-note">Want to try first? <a href="how-it-works.html">See the free demo</a></p>
+  </div>
+</div>
+
+<!-- ===== MAIN TOOL (shown after auth) ===== -->
+<div id="toolSection">
+
+  <!-- Page Hero -->
+  <div class="page-hero">
+    <div class="pro-badge">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Premium Tool
+    </div>
+    <h1>AI Essay Review</h1>
+    <p>Paste your essay or upload a PDF to receive expert-level feedback on structure, voice, storytelling, and admissions impact.</p>
+  </div>
+
+  <!-- ===== TOOL SECTION ===== -->
+  <section class="tool-section">
+    <div class="tool-inner">
+
+      <!-- Input Card -->
+      <div class="input-card fade-in" id="inputCard">
+        <h3>Your Essay</h3>
+
+        <!-- Meta fields -->
+        <div class="meta-grid">
+          <div class="form-group">
+            <label for="essayType">Essay Type</label>
+            <select id="essayType">
+              <option value="common-app">Common App Personal Statement</option>
+              <option value="supplement-short">Short Supplement (&lt; 250 words)</option>
+              <option value="supplement-long">Long Supplement (250–650 words)</option>
+              <option value="scholarship">Scholarship Essay</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="targetSchool">Target School (optional)</label>
+            <input type="text" id="targetSchool" placeholder="e.g. University of Pennsylvania" />
+          </div>
+        </div>
+
+        <!-- Input method toggle -->
+        <div class="input-toggle" role="tablist">
+          <button class="toggle-btn active" id="tabPaste" role="tab" onclick="switchTab('paste')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 2h6l2 2v16a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4l2-2z"/><polyline points="9 7 15 7"/><polyline points="9 11 15 11"/><polyline points="9 15 13 15"/></svg>
+            Paste Text
+          </button>
+          <button class="toggle-btn" id="tabUpload" role="tab" onclick="switchTab('upload')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Upload PDF
+          </button>
+        </div>
+
+        <!-- Paste input -->
+        <div id="pasteZone">
+          <textarea id="essayText" placeholder="Paste your essay here... The more complete your draft, the more specific the feedback." oninput="updateWordCount()"></textarea>
+          <div class="word-counter" id="wordCounter">0 words</div>
+        </div>
+
+        <!-- PDF upload -->
+        <div id="pdfUploadZone">
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="pdfInput" accept=".pdf" onchange="handlePdfUpload(this)" />
+            <div class="upload-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <h4>Drop your PDF here</h4>
+            <p>or click to browse — PDF files only</p>
+          </div>
+          <p id="pdfStatus"></p>
+        </div>
+
+        <!-- Submit -->
+        <div class="submit-row">
+          <p class="submit-note">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Analysis takes ~5–10 seconds
+          </p>
+          <button class="btn btn-primary btn-lg" onclick="runAnalysis()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Analyze My Essay
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div id="loadingState">
+        <div class="loading-pulse">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <p style="font-size:1.1rem;font-weight:600;color:var(--navy);margin-bottom:8px">Analyzing your essay...</p>
+        <p style="color:var(--gray);font-size:0.93rem">Our AI is reading every sentence carefully.</p>
+        <ul class="loading-steps" id="loadingSteps">
+          <li id="step1"><span class="step-dot"></span> Reading essay structure</li>
+          <li id="step2"><span class="step-dot"></span> Checking word count &amp; pacing</li>
+          <li id="step3"><span class="step-dot"></span> Analyzing voice &amp; authenticity</li>
+          <li id="step4"><span class="step-dot"></span> Generating specific suggestions</li>
+        </ul>
+      </div>
+
+      <!-- Results -->
+      <div id="resultsSection">
+        <div class="results-header">
+          <div>
+            <div class="section-label">Analysis Complete</div>
+            <h2>Your Essay Review</h2>
+          </div>
+          <div class="score-display">
+            <div class="score-circle" id="scoreCircle" style="--pct:0">
+              <div class="score-inner">
+                <span class="score-num" id="scoreNum">—</span>
+                <span class="score-denom">/10</span>
+              </div>
+            </div>
+            <div class="score-label">
+              <strong id="scoreVerdict">—</strong>
+              Overall Score
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats chips -->
+        <div class="stats-row" id="statsRow"></div>
+
+        <!-- Strengths + Improvements -->
+        <div class="results-grid">
+          <div class="result-card">
+            <div class="result-card-header">
+              <div class="result-card-icon green">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <h4>Strengths</h4>
+            </div>
+            <ul class="result-items strengths-list" id="strengthsList"></ul>
+          </div>
+          <div class="result-card">
+            <div class="result-card-header">
+              <div class="result-card-icon amber">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5"><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+              </div>
+              <h4>Areas to Improve</h4>
+            </div>
+            <ul class="result-items improvements-list" id="improvementsList"></ul>
+          </div>
+        </div>
+
+        <!-- Specific suggestions -->
+        <div class="suggestions-card">
+          <h4>
+            <div class="result-card-icon navy" style="width:36px;height:36px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;margin-right:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B3A6B" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            Specific Suggestions
+          </h4>
+          <div id="suggestionsList"></div>
+        </div>
+
+        <!-- Actions -->
+        <div class="results-actions">
+          <button class="btn btn-primary" onclick="resetTool()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+            Analyze Another Essay
+          </button>
+          <a href="contact.html" class="btn btn-outline">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Book a 1-on-1 Session
+          </a>
+        </div>
+
+        <!-- Saved to history banner (shown after successful DB save) -->
+        <div id="reviewSavedBanner">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#276749" stroke-width="2.5">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          Review saved to your account.
+          <a href="dashboard.html">View Dashboard →</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="index.html" class="logo">
+            <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="40" height="40" rx="10" fill="#C9A84C"/>
+              <path d="M20 8L30 13.5V20C30 25.5 25.5 30.5 20 32C14.5 30.5 10 25.5 10 20V13.5L20 8Z" fill="none" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M15.5 20L18.5 23L24.5 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="logo-text">Admit<span>U</span></div>
+          </a>
+          <p>Expert college admissions and financial aid tutoring — in person or AI-powered, on your schedule.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Pages</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="how-it-works.html">How It Works</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="#">Essay Coaching</a></li>
+            <li><a href="essay-review.html">AI Essay Review</a></li>
+            <li><a href="#">Financial Aid Strategy</a></li>
+            <li><a href="#">Full Package</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 AdmitU. All rights reserved.</p>
+        <p>Built to help students achieve their college dreams.</p>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- end #toolSection -->
+
+<script src="script.js"></script>
+<script src="auth.js"></script>
+<script>
+// ===========================
+// AUTH-BASED ACCESS
+// ===========================
+
+function showTool() {
+  document.getElementById('paywallOverlay').style.display = 'none';
+  document.getElementById('toolSection').style.display = 'block';
+  // Re-trigger fade-in animations now that section is visible
+  document.querySelectorAll('.fade-in').forEach(function (el) {
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    obs.observe(el);
+  });
+}
+
+(async function () {
+  var sb = window.admituSupabase;
+
+  // If already signed in, show tool immediately
+  var sessionData = await sb.auth.getSession();
+  if (sessionData.data.session) { showTool(); return; }
+
+  // Listen for sign-in (including OAuth callback redirect)
+  sb.auth.onAuthStateChange(function (event, session) {
+    if (session) showTool();
+  });
+
+  // Google OAuth
+  document.getElementById('paywallGoogleBtn').addEventListener('click', async function () {
+    var redirectTo = window.location.href.split('?')[0].split('#')[0];
+    var result = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: redirectTo }
+    });
+    if (result.error) {
+      alert('Google sign-in failed: ' + result.error.message +
+            '\n\nNote: Google OAuth requires the site to be hosted (not file://).');
+    }
+  });
+
+  // Email sign in
+  document.getElementById('paywallEmailForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var errEl = document.getElementById('paywallAuthError');
+    errEl.style.display = 'none';
+    var btn = document.getElementById('paywallSigninBtn');
+    btn.textContent = 'Signing in…';
+    btn.disabled = true;
+
+    var result = await sb.auth.signInWithPassword({
+      email:    document.getElementById('paywallEmail').value.trim(),
+      password: document.getElementById('paywallPwd').value
+    });
+
+    if (result.error) {
+      errEl.textContent = result.error.message;
+      errEl.style.display = 'block';
+      btn.textContent = 'Sign In';
+      btn.disabled = false;
+    }
+    // success → onAuthStateChange fires → showTool()
+  });
+})();
+
+// ===========================
+// TAB SWITCH
+// ===========================
+function switchTab(tab) {
+  document.getElementById('tabPaste').classList.toggle('active', tab === 'paste');
+  document.getElementById('tabUpload').classList.toggle('active', tab === 'upload');
+  document.getElementById('pasteZone').style.display = tab === 'paste' ? 'block' : 'none';
+  document.getElementById('pdfUploadZone').style.display = tab === 'upload' ? 'block' : 'none';
+}
+
+// ===========================
+// WORD COUNT
+// ===========================
+function updateWordCount() {
+  const text = document.getElementById('essayText').value.trim();
+  const count = text ? text.split(/\s+/).filter(w => w.length > 0).length : 0;
+  const el = document.getElementById('wordCounter');
+  const type = document.getElementById('essayType').value;
+
+  let idealMax = 650;
+  if (type === 'supplement-short') idealMax = 250;
+  else if (type === 'supplement-long') idealMax = 650;
+  else if (type === 'scholarship') idealMax = 700;
+
+  el.textContent = `${count} word${count !== 1 ? 's' : ''}`;
+  el.className = 'word-counter';
+  if (count === 0) return;
+  if (count > idealMax) el.classList.add('over');
+  else if (count > idealMax * 0.85) el.classList.add('good');
+  else if (count < 100) el.classList.add('warning');
+  else el.classList.add('good');
+}
+
+// ===========================
+// PDF UPLOAD
+// ===========================
+if (typeof pdfjsLib !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+async function handlePdfUpload(input) {
+  const file = input.files[0];
+  const statusEl = document.getElementById('pdfStatus');
+  if (!file) return;
+
+  statusEl.style.display = 'block';
+  statusEl.className = '';
+  statusEl.textContent = 'Extracting text from PDF...';
+
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let fullText = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      fullText += content.items.map(item => item.str).join(' ') + '\n';
+    }
+    fullText = fullText.trim();
+    if (fullText.length < 20) throw new Error('Could not extract text — try pasting instead.');
+
+    // Store extracted text
+    document.getElementById('essayText').value = fullText;
+    statusEl.className = 'success';
+    statusEl.textContent = `PDF loaded — ${fullText.split(/\s+/).filter(w=>w.length>0).length} words extracted. Click "Analyze" to continue.`;
+  } catch (err) {
+    statusEl.className = 'error';
+    statusEl.textContent = err.message || 'Failed to read PDF. Please paste your essay as text instead.';
+  }
+}
+
+// Drag and drop
+const uploadZone = document.getElementById('uploadZone');
+if (uploadZone) {
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type === 'application/pdf') {
+      const input = document.getElementById('pdfInput');
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      input.files = dt.files;
+      handlePdfUpload(input);
+    }
+  });
+}
+
+// ===========================
+// ESSAY ANALYZER
+// ===========================
+function getEssayTypeName(type) {
+  const names = {
+    'common-app': 'Common App personal statement',
+    'supplement-short': 'short supplement',
+    'supplement-long': 'long supplement',
+    'scholarship': 'scholarship essay',
+    'other': 'essay'
+  };
+  return names[type] || 'essay';
+}
+
+function analyzeEssay(text, essayType, targetSchool) {
+  const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+  const wordCount = words.length;
+  const sentences = text.match(/[^.!?]+[.!?]+/g) || text.split(/\n/).filter(s => s.trim().length > 10);
+  const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+  const lowerText = text.toLowerCase();
+
+  const avgWords = sentences.length > 0 ? Math.round(wordCount / sentences.length) : 0;
+
+  // Cliché detection
+  const cliches = [
+    { phrase: 'ever since i was young', label: '"ever since I was young"' },
+    { phrase: 'ever since i was a child', label: '"ever since I was a child"' },
+    { phrase: 'ever since i was little', label: '"ever since I was little"' },
+    { phrase: 'i have always been passionate', label: '"I have always been passionate"' },
+    { phrase: 'changed my life', label: '"changed my life"' },
+    { phrase: 'learning experience', label: '"learning experience"' },
+    { phrase: 'made me who i am', label: '"made me who I am"' },
+    { phrase: 'never give up', label: '"never give up"' },
+    { phrase: 'in conclusion', label: '"in conclusion"' },
+    { phrase: 'in today\'s world', label: '"in today\'s world"' },
+    { phrase: 'unique individual', label: '"unique individual"' },
+    { phrase: 'hard work pays off', label: '"hard work pays off"' },
+  ];
+  const foundCliches = cliches.filter(c => lowerText.includes(c.phrase));
+
+  // Passive voice
+  const passivePatterns = ['was done', 'were done', 'has been', 'have been', 'had been', 'is being', 'was being', 'were being'];
+  const passiveCount = passivePatterns.filter(p => lowerText.includes(p)).length;
+
+  // "I" sentence starts
+  const iStartCount = sentences.filter(s => s.trim().toLowerCase().startsWith('i ')).length;
+  const iStartPct = sentences.length > 0 ? Math.round((iStartCount / sentences.length) * 100) : 0;
+
+  // Weak opening
+  const openingLower = text.substring(0, 120).toLowerCase();
+  const weakStarters = ['my name is', 'i am writing', 'i would like to', 'this essay', 'in this essay', 'i am going to'];
+  const hasWeakHook = weakStarters.some(s => openingLower.includes(s));
+
+  // Abstract language
+  const abstractWords = ['things', 'stuff', 'various aspects', 'many things', 'a lot of things', 'different kinds'];
+  const abstractCount = abstractWords.filter(w => lowerText.includes(w)).length;
+
+  // Word count ideals
+  let idealMin, idealMax;
+  if (essayType === 'common-app') { idealMin = 500; idealMax = 650; }
+  else if (essayType === 'supplement-short') { idealMin = 100; idealMax = 250; }
+  else if (essayType === 'supplement-long') { idealMin = 300; idealMax = 650; }
+  else if (essayType === 'scholarship') { idealMin = 400; idealMax = 700; }
+  else { idealMin = 400; idealMax = 650; }
+
+  // Score
+  let score = 6.5;
+  if (wordCount >= idealMin && wordCount <= idealMax) score += 0.5;
+  else if (wordCount < idealMin * 0.75 || wordCount > idealMax * 1.1) score -= 0.8;
+  else score -= 0.3;
+  if (foundCliches.length === 0) score += 0.5;
+  else score -= Math.min(foundCliches.length * 0.3, 1.2);
+  if (!hasWeakHook) score += 0.3;
+  else score -= 0.3;
+  if (iStartPct < 35) score += 0.3;
+  else if (iStartPct > 60) score -= 0.5;
+  if (paragraphs.length >= 3 && paragraphs.length <= 7) score += 0.2;
+  if (abstractCount === 0) score += 0.2;
+  else score -= abstractCount * 0.15;
+  if (passiveCount > 3) score -= 0.3;
+  score = Math.round(Math.min(9.8, Math.max(4.0, score)) * 10) / 10;
+
+  // Build feedback
+  const strengths = [];
+  const improvements = [];
+  const suggestions = [];
+
+  // Word count
+  if (wordCount >= idealMin && wordCount <= idealMax) {
+    strengths.push(`Your essay is ${wordCount} words — right in the optimal range for a ${getEssayTypeName(essayType)}. This shows strong editing discipline.`);
+  } else if (wordCount > idealMax) {
+    improvements.push(`At ${wordCount} words, you're over the ${idealMax}-word recommended limit. Cut the weakest 20%: usually background context, redundant examples, or "setup" paragraphs that delay the real story.`);
+  } else if (wordCount < idealMin) {
+    improvements.push(`At ${wordCount} words, you have room to expand. Add a specific anecdote, more sensory detail, or deepen one moment to reach the ${idealMin}–${idealMax} sweet spot.`);
+  }
+
+  // Hook
+  if (hasWeakHook) {
+    improvements.push(`Your opening is too predictable. Jump straight into a scene, an unexpected detail, or a question — don't introduce yourself or announce the topic.`);
+    suggestions.push({ type: 'Hook Revision', text: `Replace your opening with the most vivid, specific moment in your essay. Start mid-action: "The robot arm jerked—" or "My grandmother slid the recipe across the table without looking up." Give readers no choice but to keep reading.` });
+  } else {
+    strengths.push(`Your opening hook avoids the classic "I have always been passionate about..." trap. Starting strong is one of the highest-leverage moves in a college essay.`);
+  }
+
+  // Clichés
+  if (foundCliches.length > 0) {
+    improvements.push(`Remove or replace these overused phrases: ${foundCliches.map(c => c.label).join(', ')}. Substitute each with a specific detail, memory, or image that shows the same idea.`);
+    suggestions.push({ type: 'Cliché Removal', text: `Clichés signal lazy writing to admissions readers. For each flagged phrase, ask: "What specific moment, conversation, or image does this phrase summarize?" Then describe that specific thing instead.` });
+  } else {
+    strengths.push(`Your language is authentic and free of overused essay clichés — this makes your voice feel genuinely yours, which is exactly what admissions officers want to hear.`);
+  }
+
+  // Sentence variety
+  if (iStartPct > 50) {
+    improvements.push(`${iStartPct}% of your sentences begin with "I." Restructure some to lead with action, emotion, or setting — "Silence filled the room." or "Three years of practice came down to this moment."`);
+    suggestions.push({ type: 'Sentence Structure', text: `Transform "I did X because Y" constructions: instead of "I joined debate because I was shy," try "Debate was my cure for shyness — or so I told myself as my hands shook at the first tournament."` });
+  } else if (sentences.length > 3) {
+    strengths.push(`Your sentence variety is strong — you're not falling into the "I did this, then I did that" trap that makes many essays feel like a resume bullet list.`);
+  }
+
+  // Paragraph structure
+  if (paragraphs.length < 3) {
+    improvements.push(`Your essay appears to be one large block. Break it into 3–5 focused paragraphs — each anchored to one moment, idea, or shift in perspective.`);
+  } else {
+    strengths.push(`Your ${paragraphs.length}-paragraph structure creates clear narrative beats. Admissions readers can follow your thinking without losing the thread.`);
+  }
+
+  // Abstract language
+  if (abstractCount > 1) {
+    suggestions.push({ type: 'Show, Don\'t Tell', text: `Vague words like "things," "stuff," or "various aspects" dilute your writing. For every abstract claim (e.g., "it was difficult"), add the specific sensory detail that shows why: what you heard, felt, or saw in that moment.` });
+  }
+
+  // Passive voice
+  if (passiveCount > 2) {
+    suggestions.push({ type: 'Active Voice', text: `Your essay uses passive constructions (e.g., "was done," "has been"). Rewrite these to be active: "The problem was solved by me" → "I solved the problem." Active voice makes your writing feel more confident and direct.` });
+  }
+
+  // Target school
+  if (targetSchool && targetSchool.trim()) {
+    suggestions.push({ type: `${targetSchool.trim()} Fit`, text: `Research ${targetSchool.trim()}'s stated values, recent initiatives, and what they emphasize in their Class Profile. Then ensure one element of your essay — an activity, a value, a question you're asking — specifically resonates with what that school cares about. Generic essays are forgettable.` });
+  }
+
+  // Closing
+  suggestions.push({ type: 'Closing Impact', text: `Your conclusion should echo your opening to create a satisfying arc. If you opened in a specific scene, return to it — show how your perspective has shifted. Avoid restating your main points. The last sentence should linger. What image or idea do you want the reader to carry away?` });
+
+  // Ensure minimums
+  const extraStrengths = [
+    `Your personal voice comes through clearly — authenticity is the single most important quality in a college essay.`,
+    `The experiences you've chosen feel specific and personal rather than generic or resume-like.`,
+    `Your essay demonstrates self-reflection and intellectual maturity beyond your years.`,
+  ];
+  for (const s of extraStrengths) {
+    if (strengths.length >= 4) break;
+    if (!strengths.includes(s)) strengths.push(s);
+  }
+
+  const extraImprovements = [
+    `Strengthen your "so what?" — every anecdote should connect explicitly to an insight about who you are and why it matters for college.`,
+    `Consider adding one moment of internal dialogue or doubt — showing vulnerability makes essays more compelling and human.`,
+  ];
+  for (const s of extraImprovements) {
+    if (improvements.length >= 4) break;
+    if (!improvements.includes(s)) improvements.push(s);
+  }
+
+  const verdict = score >= 9 ? 'Excellent' : score >= 8 ? 'Strong' : score >= 7 ? 'Good' : score >= 6 ? 'Developing' : 'Needs Work';
+
+  return { score, verdict, wordCount, paragraphCount: paragraphs.length, sentenceCount: sentences.length, avgWords, iStartPct, foundCliches, strengths, improvements, suggestions };
+}
+
+// ===========================
+// RUN ANALYSIS
+// ===========================
+function runAnalysis() {
+  const text = document.getElementById('essayText').value.trim();
+  if (!text || text.split(/\s+/).filter(w=>w.length>0).length < 30) {
+    alert('Please paste an essay with at least 30 words before analyzing.');
+    return;
+  }
+
+  const essayType = document.getElementById('essayType').value;
+  const targetSchool = document.getElementById('targetSchool').value;
+
+  // Show loading
+  document.getElementById('inputCard').style.display = 'none';
+  document.getElementById('resultsSection').style.display = 'none';
+  document.getElementById('loadingState').style.display = 'block';
+
+  // Animate loading steps
+  const steps = ['step1','step2','step3','step4'];
+  let i = 0;
+  const stepInterval = setInterval(() => {
+    if (i > 0) document.getElementById(steps[i-1]).classList.replace('active','done');
+    if (i < steps.length) {
+      document.getElementById(steps[i]).classList.add('active');
+      i++;
+    } else {
+      clearInterval(stepInterval);
+    }
+  }, 700);
+
+  setTimeout(() => {
+    clearInterval(stepInterval);
+    steps.forEach(s => {
+      const el = document.getElementById(s);
+      el.classList.remove('active');
+      el.classList.add('done');
+    });
+
+    const result = analyzeEssay(text, essayType, targetSchool);
+    renderResults(result, essayType);
+    saveReviewToHistory(result, essayType, targetSchool, text.substring(0, 300));
+
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('resultsSection').style.display = 'block';
+    document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 3200);
+}
+
+function renderResults(r, essayType) {
+  // Score circle
+  const pct = Math.round((r.score / 10) * 100);
+  document.getElementById('scoreCircle').style.setProperty('--pct', pct);
+  document.getElementById('scoreNum').textContent = r.score;
+  document.getElementById('scoreVerdict').textContent = r.verdict;
+
+  // Stats
+  const statsRow = document.getElementById('statsRow');
+  const statsData = [
+    { val: r.wordCount, lbl: 'Words' },
+    { val: r.paragraphCount, lbl: 'Paragraphs' },
+    { val: r.sentenceCount, lbl: 'Sentences' },
+    { val: r.avgWords, lbl: 'Avg Words/Sentence' },
+    { val: r.iStartPct + '%', lbl: 'Sentences Starting "I"' },
+    { val: r.foundCliches.length, lbl: 'Clichés Found' },
+  ];
+  statsRow.innerHTML = statsData.map(s =>
+    `<div class="stat-chip"><span class="stat-val">${s.val}</span><span class="stat-lbl">${s.lbl}</span></div>`
+  ).join('');
+
+  // Strengths
+  document.getElementById('strengthsList').innerHTML = r.strengths.slice(0, 4).map(s => `<li>${s}</li>`).join('');
+
+  // Improvements
+  document.getElementById('improvementsList').innerHTML = r.improvements.slice(0, 4).map(s => `<li>${s}</li>`).join('');
+
+  // Suggestions
+  document.getElementById('suggestionsList').innerHTML = r.suggestions.map(s =>
+    `<div class="suggestion-item">
+       <div class="suggestion-type">${s.type}</div>
+       <div class="suggestion-text">${s.text}</div>
+     </div>`
+  ).join('');
+}
+
+// ===========================
+// SAVE REVIEW TO SUPABASE
+// ===========================
+async function saveReviewToHistory(r, essayType, targetSchool, essayPreview) {
+  const sb = window.admituSupabase;
+  if (!sb) return;
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return; // not signed in — skip silently
+
+  const { error } = await sb.from('essay_reviews').insert([{
+    user_id:         session.user.id,
+    essay_type:      essayType,
+    target_school:   targetSchool ? targetSchool.trim() || null : null,
+    score:           r.score,
+    verdict:         r.verdict,
+    word_count:      r.wordCount,
+    paragraph_count: r.paragraphCount,
+    sentence_count:  r.sentenceCount,
+    cliche_count:    r.foundCliches.length,
+    i_start_pct:     r.iStartPct,
+    essay_preview:   essayPreview.trim(),
+    strengths:       r.strengths,
+    improvements:    r.improvements,
+    suggestions:     r.suggestions
+  }]);
+
+  if (!error) {
+    document.getElementById('reviewSavedBanner').style.display = 'flex';
+  }
+}
+
+function resetTool() {
+  document.getElementById('resultsSection').style.display = 'none';
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('inputCard').style.display = 'block';
+  document.getElementById('reviewSavedBanner').style.display = 'none';
+  document.getElementById('essayText').value = '';
+  document.getElementById('wordCounter').textContent = '0 words';
+  document.getElementById('wordCounter').className = 'word-counter';
+  // Reset loading steps
+  ['step1','step2','step3','step4'].forEach(s => {
+    const el = document.getElementById(s);
+    el.classList.remove('active','done');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

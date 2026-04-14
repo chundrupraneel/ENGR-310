@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How It Works — AdmitU</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* ===== DEMO SECTION ===== */
+    .demo-section {
+      background: var(--off-white);
+      padding: 80px 32px;
+    }
+
+    .demo-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .demo-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .attempts-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(201,168,76,0.12);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 100px;
+      padding: 6px 18px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #8B6914;
+      margin-bottom: 16px;
+    }
+
+    .demo-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--gray-light);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .demo-card-header {
+      background: linear-gradient(135deg, var(--navy), #2a5298);
+      padding: 20px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .demo-card-header h3 {
+      color: var(--white);
+      font-size: 1rem;
+    }
+
+    .demo-counter {
+      background: rgba(255,255,255,0.15);
+      color: var(--white);
+      border-radius: 100px;
+      padding: 4px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .demo-card-body {
+      padding: 28px;
+    }
+
+    #demoEssayText {
+      width: 100%;
+      min-height: 200px;
+      padding: 14px 16px;
+      border: 2px solid var(--gray-light);
+      border-radius: 10px;
+      font-size: 0.94rem;
+      font-family: var(--font-sans);
+      color: var(--text);
+      resize: vertical;
+      outline: none;
+      background: var(--white);
+      transition: border-color 0.2s ease;
+      line-height: 1.7;
+    }
+
+    #demoEssayText:focus {
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(27,58,107,0.08);
+    }
+
+    .demo-word-count {
+      text-align: right;
+      font-size: 0.82rem;
+      color: var(--gray);
+      margin-top: 6px;
+      margin-bottom: 18px;
+    }
+
+    /* Demo loading */
+    #demoLoading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .demo-spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid var(--gray-light);
+      border-top-color: var(--navy);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Demo results */
+    #demoResults { display: none; }
+
+    .demo-score-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--off-white);
+      border-radius: 10px;
+      padding: 16px 20px;
+      border: 1px solid var(--gray-light);
+      margin-bottom: 16px;
+    }
+
+    .demo-score-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--navy);
+      min-width: 48px;
+    }
+
+    .demo-score-track {
+      flex: 1;
+      height: 8px;
+      background: var(--gray-light);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .demo-score-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--navy), #2a5298);
+      border-radius: 4px;
+      transition: width 1s ease;
+      width: 0;
+    }
+
+    .demo-result-block {
+      background: var(--off-white);
+      border-radius: 10px;
+      padding: 18px 20px;
+      border: 1px solid var(--gray-light);
+      margin-bottom: 12px;
+    }
+
+    .demo-result-block h5 {
+      font-size: 0.85rem;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .demo-result-block ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+    .demo-result-block li {
+      font-size: 0.88rem;
+      color: var(--gray-dark);
+      line-height: 1.6;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .demo-result-block li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--navy);
+    }
+
+    /* Paywall gate */
+    #demoPaywall {
+      display: none;
+      text-align: center;
+      padding: 48px 32px;
+      background: linear-gradient(135deg, #f0f5ff, #e8f0fe);
+      border-top: 1px solid rgba(27,58,107,0.1);
+    }
+
+    #demoPaywall .paywall-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--navy), #2a5298);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    #demoPaywall h3 { font-size: 1.4rem; color: var(--navy); margin-bottom: 10px; }
+
+    #demoPaywall p {
+      color: var(--gray);
+      font-size: 0.97rem;
+      line-height: 1.65;
+      margin-bottom: 24px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .demo-cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* ===== PROCESS STEPS ===== */
+    .process-section { background: var(--white); }
+
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .steps-list::before {
+      content: '';
+      position: absolute;
+      left: 27px;
+      top: 28px;
+      bottom: 28px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--navy) 0%, var(--gray-light) 100%);
+    }
+
+    .step-item {
+      display: flex;
+      gap: 28px;
+      padding: 0 0 44px 0;
+      position: relative;
+    }
+
+    .step-item:last-child { padding-bottom: 0; }
+
+    .step-num {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: var(--white);
+      font-size: 1.1rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 0 6px var(--white), 0 4px 16px rgba(27,58,107,0.2);
+    }
+
+    .step-body { padding-top: 12px; }
+    .step-body h3 { font-size: 1.15rem; color: var(--navy); margin-bottom: 8px; }
+    .step-body p { color: var(--gray); font-size: 0.95rem; line-height: 1.7; }
+
+    .step-tag {
+      display: inline-block;
+      background: rgba(27,58,107,0.07);
+      color: var(--navy);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 3px 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    /* ===== FAQ ===== */
+    .faq-section { background: var(--off-white); }
+
+    .faq-list {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .faq-item { border-bottom: 1px solid var(--gray-light); }
+
+    .faq-question {
+      width: 100%;
+      text-align: left;
+      padding: 20px 0;
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: var(--font-sans);
+    }
+
+    .faq-chevron { width: 20px; height: 20px; flex-shrink: 0; transition: transform 0.25s ease; }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+
+    .faq-answer { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
+    .faq-item.open .faq-answer { max-height: 240px; }
+
+    .faq-answer p {
+      padding-bottom: 20px;
+      font-size: 0.94rem;
+      color: var(--gray);
+      line-height: 1.75;
+    }
+
+    @media (max-width: 768px) {
+      .steps-list::before { left: 23px; }
+      .step-num { width: 48px; height: 48px; font-size: 1rem; }
+      .demo-card-body { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="#1B3A6B"/>
+        <path d="M20 8L30 13.5V20C30 25.5 25.5 30.5 20 32C14.5 30.5 10 25.5 10 20V13.5L20 8Z" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M15.5 20L18.5 23L24.5 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="logo-text">Admit<span>U</span></div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="how-it-works.html" class="active">How It Works</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="essay-review.html" style="color:var(--gold);font-weight:700;">Essay Review ✦</a></li>
+      <li id="nav-auth-item"></li>
+      <li id="nav-get-started"><a href="contact.html" class="nav-cta btn">Get Started</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== PAGE HERO ===== -->
+<div class="page-hero">
+  <h1>How It Works</h1>
+  <p>Try the AI essay analyzer below, then see the full process behind AdmitU.</p>
+</div>
+
+<!-- ===== DEMO SECTION (TOP) ===== -->
+<section class="demo-section" id="demo">
+  <div class="demo-inner">
+    <div class="demo-header fade-in">
+      <div class="attempts-badge" id="attemptsBadge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span id="attemptsText">3 free analyses remaining</span>
+      </div>
+      <div class="section-label">Try It Free</div>
+      <h2 class="section-title">AI Essay Analyzer</h2>
+      <div class="divider"></div>
+      <p class="section-subtitle">Paste a few paragraphs of your essay and get instant feedback — no account needed. 3 free tries.</p>
+    </div>
+
+    <div class="demo-card fade-in">
+      <div class="demo-card-header">
+        <h3>AI Essay Analyzer — Free Demo</h3>
+        <span class="demo-counter" id="demoCounterBadge">3 / 3 uses left</span>
+      </div>
+
+      <div id="demoInputArea" class="demo-card-body">
+        <textarea id="demoEssayText" placeholder="Paste at least a paragraph or two of your essay here..." oninput="updateDemoWordCount()"></textarea>
+        <div class="demo-word-count" id="demoWordCount">0 words</div>
+        <button class="btn btn-primary" style="width:100%" onclick="runDemoAnalysis()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Analyze My Essay
+        </button>
+      </div>
+
+      <div id="demoLoading" class="demo-card-body">
+        <div class="demo-spinner"></div>
+        <p style="color:var(--navy);font-weight:600;font-size:0.97rem">Analyzing your essay...</p>
+      </div>
+
+      <div id="demoResults" class="demo-card-body">
+        <div class="demo-score-bar">
+          <div class="demo-score-num" id="demoScoreNum">—</div>
+          <div style="flex:1">
+            <div style="font-weight:700;color:var(--navy);font-size:0.97rem;margin-bottom:4px" id="demoScoreVerdict">—</div>
+            <div class="demo-score-track"><div class="demo-score-fill" id="demoScoreFill"></div></div>
+          </div>
+          <div style="font-size:0.8rem;color:var(--gray);white-space:nowrap;margin-left:4px">out of 10</div>
+        </div>
+
+        <div class="demo-result-block">
+          <h5>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Strengths
+          </h5>
+          <ul id="demoStrengths"></ul>
+        </div>
+
+        <div class="demo-result-block">
+          <h5>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5"><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+            Top Improvements
+          </h5>
+          <ul id="demoImprovements"></ul>
+        </div>
+
+        <div style="text-align:center;padding:16px 0 4px">
+          <p style="font-size:0.88rem;color:var(--gray);margin-bottom:16px">Want the full analysis? The premium tool adds school-specific fit, cliché detection, specific line edits, and unlimited reviews.</p>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <button class="btn btn-outline" onclick="resetDemo()" id="demoResetBtn" style="font-size:0.9rem;padding:10px 20px">Try Another Essay</button>
+            <a href="essay-review.html" class="btn btn-primary" style="font-size:0.9rem;padding:10px 20px">
+              Get Full Analysis
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div id="demoPaywall">
+        <div class="paywall-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <h3>You've used all 3 free analyses</h3>
+        <p>Unlock the full AI Essay Review for unlimited analyses, detailed scoring, cliché detection, school-specific fit, and actionable line edits.</p>
+        <div class="demo-cta-row">
+          <a href="essay-review.html" class="btn btn-primary">Get Full Access</a>
+          <a href="contact.html" class="btn btn-outline">Book a Free Consult</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROCESS STEPS ===== -->
+<section class="process-section">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label">The Process</div>
+      <h2 class="section-title">Your Roadmap to Admission</h2>
+      <div class="divider"></div>
+      <p class="section-subtitle">Whether you choose 1-on-1 coaching or the AI tool, every student follows this proven framework.</p>
+    </div>
+
+    <div class="steps-list">
+      <div class="step-item fade-in">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-tag">Free</div>
+          <h3>Book a Free Consultation</h3>
+          <p>A 30-minute call to understand your profile, goals, target schools, and timeline. I'll assess your current application strength and outline a personalized plan — no commitment required.</p>
+        </div>
+      </div>
+      <div class="step-item fade-in">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-tag">Strategy</div>
+          <h3>Build Your School List &amp; Story</h3>
+          <p>Together we build a balanced school list — reach, target, and safety — and identify the narrative thread that ties your whole application together.</p>
+        </div>
+      </div>
+      <div class="step-item fade-in">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-tag">Essays</div>
+          <h3>Draft, Analyze, and Refine</h3>
+          <p>We brainstorm, outline, and draft your Common App and supplements. Every essay is reviewed for structure, voice, and admissions impact — in live sessions or through the AI tool — with multiple revision rounds until every word earns its place.</p>
+        </div>
+      </div>
+      <div class="step-item fade-in">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-tag">Financial Aid</div>
+          <h3>Maximize Your Financial Aid</h3>
+          <p>Walk through FAFSA and CSS Profile strategy, appeal letters, scholarship searches, and how to compare aid packages — so you can actually afford your dream school.</p>
+        </div>
+      </div>
+      <div class="step-item fade-in">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-tag">Submit</div>
+          <h3>Final Review &amp; Submission</h3>
+          <p>A complete audit before anything goes out: essays, activities list, honors, and short answers. You'll submit knowing your application is the strongest possible version of you.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="faq-section">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">Common Questions</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="faq-list fade-in">
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How is this different from having my English teacher review my essay?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">
+          <p>English teachers optimize for grammar and narrative quality. Admissions coaching optimizes for what admissions officers look for: authenticity, insight, demonstrated values, and school fit. These are different goals — and the best admissions essays often break conventional English class rules.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How does the AI Essay Review work?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">
+          <p>You paste or upload your essay, select the type, and optionally enter your target school. The AI checks word count, detects clichés, evaluates your opening hook, assesses sentence variety, identifies passive voice, and checks paragraph structure — then generates prioritized, specific feedback.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          When should I start?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">
+          <p>Ideally the summer before senior year, when there's time to draft and refine without deadline pressure. That said, I work with students at every stage — including mid-application crunch time. Earlier is always better, but it's never too late to improve your application.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Will you write the essay for me?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">
+          <p>No — ghostwritten essays are detectable, violate academic integrity, and don't work as well. My job is to help you find and articulate your own story more powerfully. I ask the right questions, provide structure, and give detailed feedback. The voice has to be yours.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How much does it cost?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer">
+          <p>Sessions start at $30–$60 depending on the service. Full packages are custom-priced based on your timeline and needs. Book a free consultation and I'll give you a clear picture — no pressure.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">
+          <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="10" fill="#C9A84C"/>
+            <path d="M20 8L30 13.5V20C30 25.5 25.5 30.5 20 32C14.5 30.5 10 25.5 10 20V13.5L20 8Z" fill="none" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M15.5 20L18.5 23L24.5 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="logo-text">Admit<span>U</span></div>
+        </a>
+        <p>Expert college admissions and financial aid tutoring — in person or AI-powered, on your schedule.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="how-it-works.html">How It Works</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">Essay Coaching</a></li>
+          <li><a href="essay-review.html">AI Essay Review</a></li>
+          <li><a href="#">Financial Aid Strategy</a></li>
+          <li><a href="#">Full Package</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 AdmitU. All rights reserved.</p>
+      <p>Built to help students achieve their college dreams.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+<script src="auth.js"></script>
+<script>
+const MAX_ATTEMPTS = 3;
+const STORAGE_KEY = 'admitu_demo_attempts';
+
+function getDemoAttempts() {
+  return parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+}
+
+function incrementAttempts() {
+  const next = getDemoAttempts() + 1;
+  localStorage.setItem(STORAGE_KEY, next);
+  return next;
+}
+
+function updateAttemptsUI() {
+  const used = getDemoAttempts();
+  const remaining = Math.max(0, MAX_ATTEMPTS - used);
+  document.getElementById('attemptsText').textContent =
+    remaining === 1 ? '1 free analysis remaining' :
+    remaining === 0 ? 'No free analyses left' :
+    `${remaining} free analyses remaining`;
+  document.getElementById('demoCounterBadge').textContent = `${remaining} / ${MAX_ATTEMPTS} uses left`;
+  if (remaining === 0) showDemoPaywall();
+}
+
+function showDemoPaywall() {
+  document.getElementById('demoInputArea').style.display = 'none';
+  document.getElementById('demoLoading').style.display = 'none';
+  document.getElementById('demoResults').style.display = 'none';
+  document.getElementById('demoPaywall').style.display = 'block';
+}
+
+function updateDemoWordCount() {
+  const text = document.getElementById('demoEssayText').value.trim();
+  const count = text ? text.split(/\s+/).filter(w => w.length > 0).length : 0;
+  document.getElementById('demoWordCount').textContent = `${count} word${count !== 1 ? 's' : ''}`;
+}
+
+function analyzeEssayDemo(text) {
+  const sentences = text.match(/[^.!?]+[.!?]+/g) || [];
+  const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+  const lowerText = text.toLowerCase();
+
+  const cliches = [
+    { phrase: 'ever since i was young', label: '"ever since I was young"' },
+    { phrase: 'ever since i was a child', label: '"ever since I was a child"' },
+    { phrase: 'i have always been passionate', label: '"I have always been passionate"' },
+    { phrase: 'changed my life', label: '"changed my life"' },
+    { phrase: 'learning experience', label: '"learning experience"' },
+    { phrase: 'made me who i am', label: '"made me who I am"' },
+    { phrase: 'never give up', label: '"never give up"' },
+    { phrase: 'in conclusion', label: '"in conclusion"' },
+    { phrase: 'unique individual', label: '"unique individual"' },
+  ];
+  const foundCliches = cliches.filter(c => lowerText.includes(c.phrase));
+
+  const iStartCount = sentences.filter(s => s.trim().toLowerCase().startsWith('i ')).length;
+  const iStartPct = sentences.length > 0 ? Math.round((iStartCount / sentences.length) * 100) : 0;
+
+  const openingLower = text.substring(0, 120).toLowerCase();
+  const hasWeakHook = ['my name is', 'i am writing', 'i would like to', 'this essay', 'in this essay'].some(s => openingLower.includes(s));
+
+  let score = 6.5;
+  if (foundCliches.length === 0) score += 0.5;
+  else score -= Math.min(foundCliches.length * 0.35, 1.2);
+  if (!hasWeakHook) score += 0.3; else score -= 0.3;
+  if (iStartPct < 35) score += 0.3; else if (iStartPct > 60) score -= 0.5;
+  if (paragraphs.length >= 2) score += 0.2;
+  score = Math.round(Math.min(9.8, Math.max(4.0, score)) * 10) / 10;
+
+  const strengths = [];
+  const improvements = [];
+
+  if (!hasWeakHook) strengths.push('Your opening hook avoids the "I have always been passionate about..." trap — a strong start that draws readers in.');
+  else improvements.push('Your opening is too generic. Start mid-action or with a surprising detail to grab attention immediately.');
+
+  if (foundCliches.length === 0) strengths.push('No overused phrases detected — your language feels authentic and specific to you.');
+  else improvements.push(`Replace overused phrases: ${foundCliches.map(c => c.label).join(', ')}. Swap each with a specific memory or image.`);
+
+  if (iStartPct > 50) improvements.push(`${iStartPct}% of sentences start with "I." Vary your structure to create better rhythm.`);
+  else if (sentences.length > 2) strengths.push('Your sentence variety is solid — you avoid the repetitive "I did X, then I did Y" pattern.');
+
+  if (paragraphs.length >= 2) strengths.push(`Your ${paragraphs.length}-paragraph structure creates clear narrative flow.`);
+  else improvements.push('Break your text into 3–5 focused paragraphs, each anchored to one moment or idea.');
+
+  const extraStrengths = [
+    'Your personal voice comes through — authenticity is the most important quality in a college essay.',
+    'The specificity in your writing helps you stand out from generic applications.',
+  ];
+  for (const s of extraStrengths) {
+    if (strengths.length >= 3) break;
+    if (!strengths.includes(s)) strengths.push(s);
+  }
+
+  const extraImprovements = [
+    'Strengthen your "so what?" — connect each anecdote to a larger insight about who you are.',
+    'Add one moment of vulnerability or doubt — it makes essays far more compelling and human.',
+  ];
+  for (const s of extraImprovements) {
+    if (improvements.length >= 3) break;
+    if (!improvements.includes(s)) improvements.push(s);
+  }
+
+  const verdict = score >= 9 ? 'Excellent' : score >= 8 ? 'Strong' : score >= 7 ? 'Good' : score >= 6 ? 'Developing' : 'Needs Work';
+  return { score, verdict, strengths, improvements };
+}
+
+function runDemoAnalysis() {
+  if (getDemoAttempts() >= MAX_ATTEMPTS) { showDemoPaywall(); return; }
+
+  const text = document.getElementById('demoEssayText').value.trim();
+  if (!text || text.split(/\s+/).filter(w => w.length > 0).length < 20) {
+    alert('Please paste at least a paragraph of your essay first.');
+    return;
+  }
+
+  document.getElementById('demoInputArea').style.display = 'none';
+  document.getElementById('demoLoading').style.display = 'block';
+
+  const newCount = incrementAttempts();
+  updateAttemptsUI();
+
+  setTimeout(() => {
+    const result = analyzeEssayDemo(text);
+
+    document.getElementById('demoScoreNum').textContent = result.score;
+    document.getElementById('demoScoreVerdict').textContent = result.verdict;
+    setTimeout(() => {
+      document.getElementById('demoScoreFill').style.width = `${(result.score / 10) * 100}%`;
+    }, 100);
+
+    document.getElementById('demoStrengths').innerHTML = result.strengths.slice(0, 2).map(s => `<li>${s}</li>`).join('');
+    document.getElementById('demoImprovements').innerHTML = result.improvements.slice(0, 2).map(s => `<li>${s}</li>`).join('');
+
+    if (newCount >= MAX_ATTEMPTS) {
+      document.getElementById('demoResetBtn').style.display = 'none';
+    }
+
+    document.getElementById('demoLoading').style.display = 'none';
+    document.getElementById('demoResults').style.display = 'block';
+  }, 2000);
+}
+
+function resetDemo() {
+  if (getDemoAttempts() >= MAX_ATTEMPTS) { showDemoPaywall(); return; }
+  document.getElementById('demoResults').style.display = 'none';
+  document.getElementById('demoEssayText').value = '';
+  document.getElementById('demoWordCount').textContent = '0 words';
+  document.getElementById('demoScoreFill').style.width = '0';
+  document.getElementById('demoInputArea').style.display = 'block';
+}
+
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// Init
+updateAttemptsUI();
+if (getDemoAttempts() >= MAX_ATTEMPTS) {
+  document.getElementById('demoInputArea').style.display = 'none';
+  document.getElementById('demoPaywall').style.display = 'block';
+}
+</script>
+</body>
+</html>
