@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Dashboard — AdmitU</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* ===== DASHBOARD LAYOUT ===== */
+    .dashboard-section {
+      background: var(--off-white);
+      min-height: calc(100vh - 72px);
+      padding-top: 80px;
+    }
+
+    .dashboard-header {
+      background: linear-gradient(160deg, var(--navy-dark) 0%, #1e4080 55%, #2a5298 100%);
+      padding: 64px 32px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .dashboard-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .dashboard-header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .dashboard-greeting {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.65);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .dashboard-header h1 {
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      color: var(--white);
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .dashboard-header p {
+      color: rgba(255,255,255,0.75);
+      font-size: 1rem;
+    }
+    .dashboard-cta {
+      flex-shrink: 0;
+    }
+
+    /* ===== STATS SUMMARY ===== */
+    .dashboard-stats {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-light);
+      padding: 24px 32px;
+    }
+    .dashboard-stats-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .dash-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .dash-stat-val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1;
+    }
+    .dash-stat-lbl {
+      font-size: 0.82rem;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+    .dash-stat-divider {
+      width: 1px;
+      background: var(--gray-light);
+      align-self: stretch;
+    }
+
+    /* ===== REVIEWS LIST ===== */
+    .reviews-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 32px 80px;
+    }
+
+    .reviews-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .reviews-section-header h2 {
+      font-size: 1.3rem;
+      color: var(--navy);
+    }
+
+    /* Loading state */
+    .reviews-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 80px 0;
+      color: var(--gray);
+    }
+    .reviews-spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--gray-light);
+      border-top-color: var(--navy);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Empty state */
+    .reviews-empty {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 80px 32px;
+      text-align: center;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--gray-light);
+    }
+    .reviews-empty-icon {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, var(--off-white), var(--gray-light));
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .reviews-empty h3 {
+      font-size: 1.2rem;
+      color: var(--navy);
+    }
+    .reviews-empty p {
+      color: var(--gray);
+      font-size: 0.95rem;
+      max-width: 380px;
+      line-height: 1.65;
+    }
+
+    /* Review cards grid */
+    .reviews-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .review-card {
+      background: var(--white);
+      border: 1px solid var(--gray-light);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.2s ease;
+    }
+    .review-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .review-card-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 24px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Mini score circle */
+    .mini-score {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: conic-gradient(var(--navy) calc(var(--pct) * 1%), var(--gray-light) 0%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .mini-score-inner {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .mini-score-num {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1;
+    }
+    .mini-score-denom {
+      font-size: 0.55rem;
+      color: var(--gray);
+    }
+
+    .review-card-meta {
+      flex: 1;
+      min-width: 0;
+    }
+    .review-card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .review-type-badge {
+      display: inline-block;
+      background: rgba(27,58,107,0.08);
+      color: var(--navy);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 2px 8px;
+      border-radius: 5px;
+    }
+    .review-card-info {
+      font-size: 0.85rem;
+      color: var(--gray);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .review-info-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .review-verdict-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      flex-shrink: 0;
+    }
+    .verdict-excellent { background: #f0fdf4; color: #166534; }
+    .verdict-strong    { background: #eff6ff; color: #1e40af; }
+    .verdict-good      { background: #fefce8; color: #854d0e; }
+    .verdict-developing{ background: #fff7ed; color: #9a3412; }
+    .verdict-needs     { background: #fef2f2; color: #991b1b; }
+
+    .review-expand-btn {
+      flex-shrink: 0;
+      color: var(--gray);
+      transition: transform 0.25s ease;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .review-expand-btn.open { transform: rotate(180deg); }
+
+    /* Expanded detail panel */
+    .review-detail {
+      display: none;
+      border-top: 1px solid var(--gray-light);
+      padding: 24px;
+    }
+    .review-detail.open { display: block; }
+
+    .review-preview-text {
+      font-size: 0.88rem;
+      color: var(--gray);
+      font-style: italic;
+      background: var(--off-white);
+      border-left: 3px solid var(--gray-light);
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 20px;
+      line-height: 1.65;
+    }
+
+    .review-detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 700px) {
+      .review-detail-grid { grid-template-columns: 1fr; }
+    }
+
+    .review-detail-card {
+      background: var(--off-white);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .review-detail-card h4 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 10px;
+    }
+    .review-detail-card.green h4 { color: #166534; }
+    .review-detail-card.amber h4 { color: #92400e; }
+
+    .review-detail-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .review-detail-list li {
+      font-size: 0.85rem;
+      color: var(--gray-dark);
+      line-height: 1.55;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .review-detail-list li::before {
+      content: '•';
+      font-size: 1.1rem;
+      line-height: 1.2;
+      flex-shrink: 0;
+    }
+    .review-detail-card.green .review-detail-list li::before { color: #16a34a; }
+    .review-detail-card.amber .review-detail-list li::before { color: #d97706; }
+
+    .review-suggestions {
+      margin-top: 0;
+    }
+    .review-suggestions h4 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .suggestion-pill {
+      background: var(--white);
+      border: 1px solid var(--gray-light);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+    }
+    .suggestion-pill:last-child { margin-bottom: 0; }
+    .suggestion-pill-type {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+    .suggestion-pill-text {
+      font-size: 0.85rem;
+      color: var(--gray-dark);
+      line-height: 1.55;
+    }
+
+    .review-detail-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .delete-review-btn {
+      font-size: 0.85rem;
+      color: #DC2626;
+      background: none;
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .delete-review-btn:hover {
+      background: #fef2f2;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 700px) {
+      .dashboard-header { padding: 48px 20px 32px; }
+      .reviews-section { padding: 24px 16px 60px; }
+      .dashboard-stats { padding: 20px; }
+      .review-card-header { padding: 16px; gap: 14px; }
+      .review-detail { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="#1B3A6B"/>
+        <path d="M20 8L30 13.5V20C30 25.5 25.5 30.5 20 32C14.5 30.5 10 25.5 10 20V13.5L20 8Z" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M15.5 20L18.5 23L24.5 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="logo-text">Admit<span>U</span></div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="how-it-works.html">How It Works</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="essay-review.html" style="color:var(--gold);font-weight:700;">Essay Review ✦</a></li>
+      <li id="nav-auth-item"></li>
+      <li id="nav-get-started"><a href="contact.html" class="nav-cta btn">Get Started</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== DASHBOARD HEADER ===== -->
+<div class="dashboard-section">
+  <div class="dashboard-header">
+    <div class="dashboard-header-inner">
+      <div>
+        <div class="dashboard-greeting" id="dashGreeting">Welcome back</div>
+        <h1>My Essay Reviews</h1>
+        <p>All your past analyses saved in one place.</p>
+      </div>
+      <div class="dashboard-cta">
+        <a href="essay-review.html" class="btn btn-gold">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:6px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Analysis
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats bar -->
+  <div class="dashboard-stats" id="dashStatsBar" style="display:none">
+    <div class="dashboard-stats-inner">
+      <div class="dash-stat">
+        <span class="dash-stat-val" id="statTotal">0</span>
+        <span class="dash-stat-lbl">Total Reviews</span>
+      </div>
+      <div class="dash-stat-divider"></div>
+      <div class="dash-stat">
+        <span class="dash-stat-val" id="statAvgScore">—</span>
+        <span class="dash-stat-lbl">Avg Score</span>
+      </div>
+      <div class="dash-stat-divider"></div>
+      <div class="dash-stat">
+        <span class="dash-stat-val" id="statBest">—</span>
+        <span class="dash-stat-lbl">Best Score</span>
+      </div>
+      <div class="dash-stat-divider"></div>
+      <div class="dash-stat">
+        <span class="dash-stat-val" id="statImproved" style="color:#16a34a">—</span>
+        <span class="dash-stat-lbl">Improvement</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reviews list -->
+  <div class="reviews-section">
+    <div class="reviews-section-header">
+      <h2 id="reviewsCount">Reviews</h2>
+      <a href="essay-review.html" class="btn btn-outline" style="font-size:0.9rem;padding:9px 18px;">
+        Analyze an Essay
+      </a>
+    </div>
+
+    <!-- Loading -->
+    <div class="reviews-loading" id="reviewsLoading">
+      <div class="reviews-spinner"></div>
+      <span>Loading your reviews…</span>
+    </div>
+
+    <!-- Empty state -->
+    <div class="reviews-empty" id="reviewsEmpty">
+      <div class="reviews-empty-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+      </div>
+      <h3>No reviews yet</h3>
+      <p>Analyze your first essay to start tracking your progress. Results are saved automatically when you're signed in.</p>
+      <a href="essay-review.html" class="btn btn-primary">Analyze My First Essay</a>
+    </div>
+
+    <!-- Cards -->
+    <div class="reviews-grid" id="reviewsGrid"></div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">
+          <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="10" fill="#C9A84C"/>
+            <path d="M20 8L30 13.5V20C30 25.5 25.5 30.5 20 32C14.5 30.5 10 25.5 10 20V13.5L20 8Z" fill="none" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M15.5 20L18.5 23L24.5 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="logo-text">Admit<span>U</span></div>
+        </a>
+        <p>Expert college admissions and financial aid tutoring — in person or AI-powered, on your schedule.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="how-it-works.html">How It Works</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">Essay Coaching</a></li>
+          <li><a href="essay-review.html">AI Essay Review</a></li>
+          <li><a href="#">Financial Aid Strategy</a></li>
+          <li><a href="#">Full Package</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 AdmitU. All rights reserved.</p>
+      <p>Built to help students achieve their college dreams.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+<script src="auth.js"></script>
+<script>
+(async function () {
+  const sb = window.admituSupabase;
+
+  // ── Auth guard: redirect to login if not signed in ──
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    window.location.replace('login.html?next=dashboard.html');
+    return;
+  }
+
+  // ── Personalize greeting ──
+  const meta      = session.user.user_metadata || {};
+  const firstName = (meta.full_name || meta.name || '').split(' ')[0]
+                    || session.user.email.split('@')[0]
+                    || 'there';
+  document.getElementById('dashGreeting').textContent = `Welcome back, ${firstName}`;
+
+  // ── Essay type display names ──
+  const typeNames = {
+    'common-app':       'Common App',
+    'supplement-short': 'Short Supplement',
+    'supplement-long':  'Long Supplement',
+    'scholarship':      'Scholarship',
+    'other':            'Essay'
+  };
+
+  function verdictClass(v) {
+    if (!v) return '';
+    const vl = v.toLowerCase();
+    if (vl === 'excellent')  return 'verdict-excellent';
+    if (vl === 'strong')     return 'verdict-strong';
+    if (vl === 'good')       return 'verdict-good';
+    if (vl === 'developing') return 'verdict-developing';
+    return 'verdict-needs';
+  }
+
+  function formatDate(iso) {
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  // ── Load reviews ──
+  const { data: reviews, error } = await sb
+    .from('essay_reviews')
+    .select('*')
+    .eq('user_id', session.user.id)
+    .order('created_at', { ascending: false });
+
+  document.getElementById('reviewsLoading').style.display = 'none';
+
+  if (error) {
+    document.getElementById('reviewsGrid').innerHTML =
+      `<p style="color:#DC2626;padding:20px;">Error loading reviews: ${error.message}</p>`;
+    return;
+  }
+
+  if (!reviews || reviews.length === 0) {
+    document.getElementById('reviewsEmpty').style.display = 'flex';
+    document.getElementById('reviewsCount').textContent = 'Reviews';
+    return;
+  }
+
+  // ── Summary stats ──
+  const total    = reviews.length;
+  const avgScore = (reviews.reduce((s, r) => s + parseFloat(r.score), 0) / total).toFixed(1);
+  const best     = Math.max(...reviews.map(r => parseFloat(r.score))).toFixed(1);
+  // Improvement: compare first review to latest
+  let improved = '—';
+  if (reviews.length >= 2) {
+    const oldest = reviews[reviews.length - 1];
+    const newest = reviews[0];
+    const diff   = (parseFloat(newest.score) - parseFloat(oldest.score)).toFixed(1);
+    improved = (diff > 0 ? '+' : '') + diff;
+  }
+
+  document.getElementById('statTotal').textContent  = total;
+  document.getElementById('statAvgScore').textContent = avgScore + '/10';
+  document.getElementById('statBest').textContent   = best + '/10';
+  document.getElementById('statImproved').textContent = improved;
+  document.getElementById('dashStatsBar').style.display = 'block';
+  document.getElementById('reviewsCount').textContent =
+    `${total} Review${total !== 1 ? 's' : ''}`;
+
+  // ── Render cards ──
+  const grid = document.getElementById('reviewsGrid');
+
+  reviews.forEach(function (r) {
+    const pct        = Math.round((parseFloat(r.score) / 10) * 100);
+    const typeName   = typeNames[r.essay_type] || r.essay_type || 'Essay';
+    const school     = r.target_school ? ` · ${r.target_school}` : '';
+    const vClass     = verdictClass(r.verdict);
+    const strengths  = Array.isArray(r.strengths)   ? r.strengths   : [];
+    const improves   = Array.isArray(r.improvements) ? r.improvements : [];
+    const suggs      = Array.isArray(r.suggestions)  ? r.suggestions  : [];
+
+    const card = document.createElement('div');
+    card.className = 'review-card';
+    card.dataset.id = r.id;
+
+    card.innerHTML = `
+      <div class="review-card-header" role="button" tabindex="0"
+           aria-expanded="false" aria-label="Toggle review details">
+        <div class="mini-score" style="--pct:${pct}">
+          <div class="mini-score-inner">
+            <span class="mini-score-num">${r.score}</span>
+            <span class="mini-score-denom">/10</span>
+          </div>
+        </div>
+        <div class="review-card-meta">
+          <div class="review-card-title">
+            ${typeName}${school ? `<span style="color:var(--gray);font-weight:500">${school}</span>` : ''}
+            <span class="review-verdict-pill ${vClass}">${r.verdict || ''}</span>
+          </div>
+          <div class="review-card-info">
+            <span class="review-info-item">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              ${formatDate(r.created_at)}
+            </span>
+            <span class="review-info-item">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              ${r.word_count || '—'} words
+            </span>
+            ${r.cliche_count > 0
+              ? `<span class="review-info-item" style="color:#d97706">
+                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                   ${r.cliche_count} cliché${r.cliche_count !== 1 ? 's' : ''}
+                 </span>`
+              : ''}
+          </div>
+        </div>
+        <button class="review-expand-btn" aria-label="Expand" tabindex="-1">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="review-detail">
+        ${r.essay_preview
+          ? `<div class="review-preview-text">"${r.essay_preview}${r.essay_preview.length >= 299 ? '…' : ''}"</div>`
+          : ''}
+
+        <div class="review-detail-grid">
+          ${strengths.length > 0 ? `
+            <div class="review-detail-card green">
+              <h4>Strengths</h4>
+              <ul class="review-detail-list">
+                ${strengths.slice(0, 3).map(s => `<li>${s}</li>`).join('')}
+              </ul>
+            </div>` : ''}
+
+          ${improves.length > 0 ? `
+            <div class="review-detail-card amber">
+              <h4>To Improve</h4>
+              <ul class="review-detail-list">
+                ${improves.slice(0, 3).map(s => `<li>${s}</li>`).join('')}
+              </ul>
+            </div>` : ''}
+        </div>
+
+        ${suggs.length > 0 ? `
+          <div class="review-suggestions">
+            <h4>Suggestions</h4>
+            ${suggs.slice(0, 3).map(s => `
+              <div class="suggestion-pill">
+                <div class="suggestion-pill-type">${s.type || ''}</div>
+                <div class="suggestion-pill-text">${s.text || ''}</div>
+              </div>`).join('')}
+          </div>` : ''}
+
+        <div class="review-detail-actions">
+          <a href="essay-review.html" class="btn btn-primary" style="font-size:0.88rem;padding:9px 16px;">
+            Analyze New Essay
+          </a>
+          <button class="delete-review-btn" data-id="${r.id}">
+            Delete This Review
+          </button>
+        </div>
+      </div>
+    `;
+
+    // Toggle expand
+    const header  = card.querySelector('.review-card-header');
+    const detail  = card.querySelector('.review-detail');
+    const chevron = card.querySelector('.review-expand-btn');
+    function toggleCard() {
+      const isOpen = detail.classList.toggle('open');
+      chevron.classList.toggle('open', isOpen);
+      header.setAttribute('aria-expanded', isOpen);
+    }
+    header.addEventListener('click', toggleCard);
+    header.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCard(); }
+    });
+
+    // Delete
+    card.querySelector('.delete-review-btn').addEventListener('click', async function (e) {
+      e.stopPropagation();
+      if (!confirm('Delete this review? This cannot be undone.')) return;
+      const reviewId = this.dataset.id;
+      const { error: delErr } = await sb.from('essay_reviews').delete().eq('id', reviewId);
+      if (delErr) {
+        alert('Failed to delete: ' + delErr.message);
+      } else {
+        card.remove();
+        const remaining = grid.querySelectorAll('.review-card').length;
+        if (remaining === 0) {
+          document.getElementById('reviewsEmpty').style.display = 'flex';
+          document.getElementById('dashStatsBar').style.display = 'none';
+          document.getElementById('reviewsCount').textContent = 'Reviews';
+        } else {
+          document.getElementById('reviewsCount').textContent =
+            `${remaining} Review${remaining !== 1 ? 's' : ''}`;
+          document.getElementById('statTotal').textContent = remaining;
+        }
+      }
+    });
+
+    grid.appendChild(card);
+  });
+})();
+</script>
+</body>
+</html>
