@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     /* ===== HERO ===== */
     .hero {
@@ -129,86 +128,6 @@
       line-height: 1.7;
     }
 
-    /* ===== AI FEATURE ===== */
-    .ai-feature {
-      background: var(--white);
-    }
-
-    .ai-feature-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 72px;
-      align-items: center;
-    }
-
-    .ai-feature-visual {
-      background: linear-gradient(135deg, #f0f5ff 0%, #e8f0fe 100%);
-      border-radius: var(--radius-lg);
-      padding: 40px 36px;
-      border: 1px solid rgba(27,58,107,0.1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .ai-chat-bubble {
-      background: var(--white);
-      border-radius: 12px 12px 12px 2px;
-      padding: 14px 18px;
-      font-size: 0.92rem;
-      color: var(--text);
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 12px;
-      max-width: 85%;
-      line-height: 1.6;
-    }
-
-    .ai-chat-bubble.response {
-      background: var(--navy);
-      color: var(--white);
-      border-radius: 12px 12px 2px 12px;
-      margin-left: auto;
-    }
-
-    .ai-chat-bubble .bubble-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 6px;
-      opacity: 0.6;
-    }
-
-    .ai-feature-content .section-subtitle {
-      margin-bottom: 28px;
-    }
-
-    .feature-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .feature-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      font-size: 0.97rem;
-      color: var(--gray-dark);
-    }
-
-    .check-icon {
-      width: 22px;
-      height: 22px;
-      background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      border-radius: 50%;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 1px;
-    }
-
     /* ===== SERVICES ===== */
     .services {
       background: var(--off-white);
@@ -288,45 +207,6 @@
       margin-right: auto;
     }
 
-    .email-form-wrapper {
-      max-width: 500px;
-      margin: 0 auto;
-    }
-
-    #email-form {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    #email-form input[type="email"] {
-      flex: 1;
-      min-width: 240px;
-      padding: 14px 18px;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-family: var(--font-sans);
-      outline: none;
-    }
-
-    #success-message {
-      display: none;
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 12px;
-      padding: 24px 32px;
-      color: var(--white);
-      font-size: 1.05rem;
-    }
-
-    #success-message strong {
-      display: block;
-      font-size: 1.3rem;
-      margin-bottom: 8px;
-    }
-
     .privacy-note {
       font-size: 0.82rem;
       color: rgba(255,255,255,0.55);
@@ -349,11 +229,6 @@
 
       .hero-actions {
         justify-content: center;
-      }
-
-      .ai-feature-inner {
-        grid-template-columns: 1fr;
-        gap: 48px;
       }
 
       .value-grid {
@@ -385,11 +260,9 @@
     <ul class="nav-links" id="navLinks">
       <li><a href="index.html" class="active">Home</a></li>
       <li><a href="about.html">About</a></li>
-      <li><a href="how-it-works.html">How It Works</a></li>
+      <li><a href="book.html">Book a Session</a></li>
       <li><a href="contact.html">Contact</a></li>
-      <li><a href="essay-review.html" style="color:var(--gold);font-weight:700;">Essay Review ✦</a></li>
-      <li id="nav-auth-item"></li>
-      <li id="nav-get-started"><a href="contact.html" class="nav-cta btn">Get Started</a></li>
+      <li><a href="book.html" class="nav-cta btn">Book Now</a></li>
     </ul>
     <div class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -406,10 +279,10 @@
         College Admissions &amp; Financial Aid Expert
       </div>
       <h1>Get Into Your <span>Dream College</span> — With Expert Guidance</h1>
-      <p>Personal 1-on-1 tutoring plus AI-powered essay analysis. Whether you meet with me or use the AI tool, you'll have an expert edge throughout the entire admissions process.</p>
+      <p>Personal 1-on-1 tutoring for every stage of the college admissions process — essays, school lists, financial aid strategy, and more. Work with someone who got into medical school straight out of high school.</p>
       <div class="hero-actions">
-        <a href="contact.html" class="btn btn-gold btn-lg">Book a Free Consult</a>
-        <a href="how-it-works.html" class="btn btn-outline-white btn-lg">See How It Works</a>
+        <a href="book.html" class="btn btn-gold btn-lg">Book a Free Consult</a>
+        <a href="about.html" class="btn btn-outline-white btn-lg">Learn About Me</a>
       </div>
     </div>
     <div class="hero-photo-single" style="border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.3);">
@@ -437,10 +310,10 @@
       </div>
       <div class="value-card fade-in">
         <div class="value-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         </div>
-        <h3>AI Essay Analysis</h3>
-        <p>Can't meet in person? Our AI tool analyzes your essays and application in minutes — providing detailed feedback on structure, tone, authenticity, and admissions impact.</p>
+        <h3>Essay & Application Coaching</h3>
+        <p>From brainstorming your Common App essay to polishing every supplement, I help you craft an application that authentically represents who you are and where you want to go.</p>
       </div>
       <div class="value-card fade-in">
         <div class="value-icon">
@@ -453,73 +326,6 @@
   </div>
 </section>
 
-<!-- ===== AI FEATURE ===== -->
-<section class="ai-feature">
-  <div class="container">
-    <div class="ai-feature-inner">
-      <div class="ai-feature-visual fade-in">
-        <div class="ai-chat-bubble">
-          <div class="bubble-label">You</div>
-          "Can you review my Common App essay? I'm worried it doesn't stand out."
-        </div>
-        <div class="ai-chat-bubble response">
-          <div class="bubble-label">AI Analysis</div>
-          Your opening hook is strong, but the third paragraph shifts tone. Here are 3 specific revisions to make your story more compelling to admissions readers...
-        </div>
-        <div class="ai-chat-bubble">
-          <div class="bubble-label">You</div>
-          "Also, can you check if my activities list is competitive for UPenn?"
-        </div>
-        <div class="ai-chat-bubble response">
-          <div class="bubble-label">AI Analysis</div>
-          Based on your profile, here are the top 3 activities to emphasize and 2 gaps to address before submitting...
-        </div>
-      </div>
-      <div class="ai-feature-content fade-in">
-        <div class="section-label">AI-Powered Tool</div>
-        <h2 class="section-title">Expert Feedback, Instantly Available</h2>
-        <div class="divider divider-left"></div>
-        <p class="section-subtitle">No time to schedule a session? Our AI tool gives you the same level of detailed, actionable feedback — available 24/7.</p>
-        <ul class="feature-list">
-          <li>
-            <div class="check-icon">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg>
-            </div>
-            Essay structure, voice, and storytelling analysis
-          </li>
-          <li>
-            <div class="check-icon">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg>
-            </div>
-            Application strength scoring by target school
-          </li>
-          <li>
-            <div class="check-icon">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg>
-            </div>
-            Financial aid strategy recommendations
-          </li>
-          <li>
-            <div class="check-icon">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg>
-            </div>
-            Activities list optimization and gap analysis
-          </li>
-          <li>
-            <div class="check-icon">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg>
-            </div>
-            Detailed, revision-ready feedback within minutes
-          </li>
-        </ul>
-        <div style="margin-top: 32px;">
-          <a href="how-it-works.html" class="btn btn-primary">See How the AI Works</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ===== SERVICES ===== -->
 <section class="services">
   <div class="container">
@@ -527,7 +333,7 @@
       <div class="section-label">Services</div>
       <h2 class="section-title">Choose What Works For You</h2>
       <div class="divider"></div>
-      <p class="section-subtitle">Whether you prefer personal guidance or instant AI feedback, we have an option that fits your needs and schedule.</p>
+      <p class="section-subtitle">Every student's journey is different. I offer personalized support at whatever stage you're at — from early research to final submission.</p>
     </div>
     <div class="services-grid">
       <div class="service-card fade-in">
@@ -537,10 +343,10 @@
         <div class="service-price">Starting at $50 / session</div>
       </div>
       <div class="service-card fade-in">
-        <div class="service-tag">AI Tool</div>
-        <h3>AI Application Review</h3>
-        <p>Upload your essays, activities list, and stats. Receive a comprehensive analysis covering every element of your application with prioritized action items.</p>
-        <div class="service-price">Starting at $60 / review</div>
+        <div class="service-tag">1-on-1</div>
+        <h3>School List & Strategy</h3>
+        <p>Build a balanced, realistic school list tailored to your academic profile, personal preferences, and financial targets — so every application is a well-placed bet, not a guess.</p>
+        <div class="service-price">Starting at $40 / session</div>
       </div>
       <div class="service-card fade-in">
         <div class="service-tag">1-on-1</div>
@@ -551,30 +357,26 @@
       <div class="service-card fade-in">
         <div class="service-tag">Full Package</div>
         <h3>Complete Admissions Package</h3>
-        <p>A comprehensive program combining regular 1-on-1 sessions, unlimited AI reviews, school list strategy, and full financial aid planning from start to submission.</p>
+        <p>A comprehensive program combining regular 1-on-1 sessions, school list strategy, essay coaching, and full financial aid planning from start to submission.</p>
         <div class="service-price">Custom pricing — contact for details</div>
       </div>
+    </div>
+    <div style="text-align:center; margin-top: 40px;">
+      <a href="book.html" class="btn btn-primary btn-lg">Book a Session</a>
     </div>
   </div>
 </section>
 
-<!-- ===== EMAIL CAPTURE ===== -->
+<!-- ===== BOOKING CTA ===== -->
 <section class="email-capture">
   <div class="container">
-    <div class="section-label" style="color: var(--gold-light);">Free Resource</div>
-    <h2>Get My Free College Admissions Checklist</h2>
-    <p>Join hundreds of students who've used my step-by-step checklist to stay organized and stress-free through the entire application season.</p>
-    <div class="email-form-wrapper">
-      <form id="email-form">
-        <input type="email" id="email-input" placeholder="Enter your email address" required autocomplete="email" />
-        <button type="submit" class="btn btn-gold btn-lg">Send It to Me</button>
-      </form>
-      <div id="success-message">
-        <strong>You're all set!</strong>
-        Check your inbox — your free checklist is on its way.
-      </div>
-      <p class="privacy-note">No spam, ever. Unsubscribe at any time.</p>
+    <div class="section-label" style="color: var(--gold-light);">Ready to Get Started?</div>
+    <h2>Book Your Free 30-Minute Consultation</h2>
+    <p>No commitment, no pressure. Let's talk about your goals, your timeline, and how I can help you get into your dream school.</p>
+    <div style="margin-top: 16px;">
+      <a href="book.html" class="btn btn-gold btn-lg">See My Availability</a>
     </div>
+    <p class="privacy-note">Sessions available evenings and weekends around Penn State's academic calendar.</p>
   </div>
 </section>
 
@@ -591,24 +393,24 @@
           </svg>
           <div class="logo-text">Admit<span>U</span></div>
         </a>
-        <p>Expert college admissions and financial aid tutoring — in person or AI-powered, on your schedule.</p>
+        <p>Expert college admissions and financial aid tutoring — personalized, 1-on-1, on your schedule.</p>
       </div>
       <div class="footer-col">
         <h4>Pages</h4>
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
-          <li><a href="how-it-works.html">How It Works</a></li>
+          <li><a href="book.html">Book a Session</a></li>
           <li><a href="contact.html">Contact</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>Services</h4>
         <ul>
-          <li><a href="#">Essay Coaching</a></li>
-          <li><a href="essay-review.html">AI Essay Review</a></li>
-          <li><a href="#">Financial Aid Strategy</a></li>
-          <li><a href="#">Full Package</a></li>
+          <li><a href="book.html">Essay Coaching</a></li>
+          <li><a href="book.html">Financial Aid Strategy</a></li>
+          <li><a href="book.html">School List Building</a></li>
+          <li><a href="book.html">Full Package</a></li>
         </ul>
       </div>
     </div>
@@ -620,32 +422,5 @@
 </footer>
 
 <script src="script.js"></script>
-<script src="auth.js"></script>
-<script>
-  const supabaseClient = window.admituSupabase;
-
-  document.getElementById('email-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = e.target.querySelector('button[type="submit"]');
-    const email = document.getElementById('email-input').value;
-
-    btn.textContent = 'Sending...';
-    btn.disabled = true;
-
-    const { error } = await supabaseClient
-      .from('subscribers')
-      .insert([{ email }]);
-
-    if (error) {
-      alert('Something went wrong. Please try again.');
-      console.error(error);
-      btn.textContent = 'Send It to Me';
-      btn.disabled = false;
-    } else {
-      document.getElementById('email-form').style.display = 'none';
-      document.getElementById('success-message').style.display = 'block';
-    }
-  });
-</script>
 </body>
 </html>

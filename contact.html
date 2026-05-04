@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     /* ===== CONTACT LAYOUT ===== */
     .contact-section {
@@ -163,129 +162,11 @@
       margin-top: 7px;
     }
 
-    /* Form column */
-    .contact-form-card {
-      background: var(--white);
-      border-radius: var(--radius-lg);
-      padding: 44px 40px;
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--gray-light);
-    }
-
-    .contact-form-card h3 {
-      font-size: 1.3rem;
-      color: var(--navy);
-      margin-bottom: 6px;
-    }
-
-    .contact-form-card > p {
-      color: var(--gray);
-      font-size: 0.95rem;
-      margin-bottom: 32px;
-    }
-
-    #contactForm {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .form-submit {
-      margin-top: 8px;
-    }
-
-    .form-submit .btn {
-      width: 100%;
-      justify-content: center;
-    }
-
-    #contactSuccess {
-      display: none;
-      text-align: center;
-      padding: 40px 20px;
-    }
-
-    .success-icon {
-      width: 72px;
-      height: 72px;
-      background: linear-gradient(135deg, #10B981, #059669);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-    }
-
-    #contactSuccess h3 {
-      font-size: 1.5rem;
-      color: var(--navy);
-      margin-bottom: 10px;
-    }
-
-    #contactSuccess p {
-      color: var(--gray);
-      font-size: 1rem;
-      line-height: 1.7;
-    }
-
-    /* ===== FAQ SECTION ===== */
-    .faq-section {
-      background: var(--white);
-    }
-
-    .faq-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-      margin-top: 52px;
-    }
-
-    .faq-item {
-      background: var(--off-white);
-      border-radius: var(--radius);
-      padding: 28px;
-      border: 1px solid var(--gray-light);
-    }
-
-    .faq-item h4 {
-      font-size: 1rem;
-      color: var(--navy);
-      margin-bottom: 10px;
-    }
-
-    .faq-item p {
-      font-size: 0.93rem;
-      color: var(--gray);
-      line-height: 1.7;
-    }
-
     /* ===== RESPONSIVE ===== */
-    @media (max-width: 900px) {
-      .contact-inner {
-        grid-template-columns: 1fr;
-        gap: 40px;
-      }
-
-      .contact-info {
-        position: static;
-      }
-
-      .faq-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .contact-form-card {
-        padding: 32px 24px;
-      }
-
-      .form-row {
-        grid-template-columns: 1fr;
+    @media (max-width: 600px) {
+      .contact-section a[href^="mailto"],
+      .contact-section a[href^="tel"] {
+        padding: 16px 20px;
       }
     }
   </style>
@@ -306,11 +187,9 @@
     <ul class="nav-links" id="navLinks">
       <li><a href="index.html">Home</a></li>
       <li><a href="about.html">About</a></li>
-      <li><a href="how-it-works.html">How It Works</a></li>
+      <li><a href="book.html">Book a Session</a></li>
       <li><a href="contact.html" class="active">Contact</a></li>
-      <li><a href="essay-review.html" style="color:var(--gold);font-weight:700;">Essay Review ✦</a></li>
-      <li id="nav-auth-item"></li>
-      <li id="nav-get-started"><a href="contact.html" class="nav-cta btn">Get Started</a></li>
+      <li><a href="book.html" class="nav-cta btn">Book Now</a></li>
     </ul>
     <div class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -325,182 +204,47 @@
 </div>
 
 <!-- ===== CONTACT SECTION ===== -->
-<section class="contact-section">
+<section class="contact-section" style="padding-bottom: 80px;">
   <div class="container">
-    <div class="contact-inner">
+    <div style="max-width: 600px; margin: 0 auto; text-align: center;">
 
-      <!-- Info Column -->
-      <div class="contact-info">
-        <img src="https://drive.google.com/thumbnail?id=1dl788gPeASBEXhgBdQXlo6qhGw3MwWAC&sz=w1200" alt="Praneel" style="width:100%; max-height:280px; object-fit:cover; object-position:center 20%; border-radius:var(--radius-lg); box-shadow:var(--shadow-md); margin-bottom:28px; display:block;" />
-        <div class="section-label">Contact</div>
-        <h2>Let's Start Your Journey</h2>
-        <p>Whether you're a rising junior starting to research schools, a senior in the thick of applications, or a family navigating financial aid — reach out and let's talk about how I can help.</p>
+      <img src="https://drive.google.com/thumbnail?id=1dl788gPeASBEXhgBdQXlo6qhGw3MwWAC&sz=w1200" alt="Praneel" style="width: 160px; height: 160px; object-fit: cover; object-position: center 20%; border-radius: 50%; box-shadow: var(--shadow-lg); margin-bottom: 28px; display: block; margin-left: auto; margin-right: auto;" />
 
-        <div class="contact-details">
-          <div class="contact-detail-item">
-            <div class="contact-detail-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            </div>
-            <div class="contact-detail-text">
-              <strong>Email</strong>
-              <a href="mailto:chundrupraneel@gmail.com">chundrupraneel@gmail.com</a>
-            </div>
+      <h2 style="font-size: 1.9rem; color: var(--navy); margin-bottom: 8px;">Praneel Chundru</h2>
+      <p style="color: var(--gold); font-weight: 600; font-size: 1rem; margin-bottom: 32px;">College Admissions &amp; Financial Aid Consultant</p>
+
+      <p style="color: var(--gray); font-size: 1.05rem; line-height: 1.8; margin-bottom: 40px;">
+        Have a question or ready to get started? Reach out directly — I respond within 24 hours and am happy to answer any questions before we book a session.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 16px; align-items: center;">
+
+        <a href="mailto:chundrupraneel@gmail.com" style="display: flex; align-items: center; gap: 14px; background: var(--white); border: 1px solid var(--gray-light); border-radius: 14px; padding: 18px 28px; width: 100%; max-width: 420px; text-decoration: none; box-shadow: var(--shadow-sm); transition: var(--transition);" onmouseover="this.style.boxShadow='var(--shadow-md)';this.style.borderColor='rgba(27,58,107,0.25)'" onmouseout="this.style.boxShadow='var(--shadow-sm)';this.style.borderColor='var(--gray-light)'">
+          <div style="width: 44px; height: 44px; background: linear-gradient(135deg, var(--navy), #2a5298); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           </div>
-          <div class="contact-detail-item">
-            <div class="contact-detail-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.62 4.38 2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            </div>
-            <div class="contact-detail-text">
-              <strong>Phone</strong>
-              <a href="tel:+14129004440">412-900-4440</a>
-            </div>
+          <div style="text-align: left;">
+            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gray); margin-bottom: 2px;">Email</div>
+            <div style="font-size: 0.97rem; font-weight: 600; color: var(--navy);">chundrupraneel@gmail.com</div>
           </div>
-          <div class="contact-detail-item">
-            <div class="contact-detail-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            </div>
-            <div class="contact-detail-text">
-              <strong>Response Time</strong>
-              <span>Within 24 hours, typically same day</span>
-            </div>
+        </a>
+
+        <a href="tel:+14129004440" style="display: flex; align-items: center; gap: 14px; background: var(--white); border: 1px solid var(--gray-light); border-radius: 14px; padding: 18px 28px; width: 100%; max-width: 420px; text-decoration: none; box-shadow: var(--shadow-sm); transition: var(--transition);" onmouseover="this.style.boxShadow='var(--shadow-md)';this.style.borderColor='rgba(27,58,107,0.25)'" onmouseout="this.style.boxShadow='var(--shadow-sm)';this.style.borderColor='var(--gray-light)'">
+          <div style="width: 44px; height: 44px; background: linear-gradient(135deg, var(--navy), #2a5298); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.62 4.38 2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           </div>
-        </div>
+          <div style="text-align: left;">
+            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gray); margin-bottom: 2px;">Phone</div>
+            <div style="font-size: 0.97rem; font-weight: 600; color: var(--navy);">412-900-4440</div>
+          </div>
+        </a>
 
-        <!-- Social Links -->
-        <div class="social-links">
-          <!-- Replace hrefs with your actual social links -->
-          <a href="#" class="social-btn" title="Instagram">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-          </a>
-          <a href="#" class="social-btn" title="LinkedIn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-          </a>
-          <a href="#" class="social-btn" title="TikTok">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
-          </a>
-        </div>
-
-        <div class="expect-box">
-          <h4>What to Expect After You Submit</h4>
-          <ul class="expect-list">
-            <li><span class="expect-dot"></span><span>I'll reply within 24 hours to schedule a free 30-minute consultation</span></li>
-            <li><span class="expect-dot"></span><span>We'll talk through your timeline, goals, and how I can best help</span></li>
-            <li><span class="expect-dot"></span><span>No pressure — the consultation is 100% free with no obligation</span></li>
-          </ul>
-        </div>
       </div>
 
-      <!-- Form Column -->
-      <div class="contact-form-card">
-        <h3>Send Me a Message</h3>
-        <p>Fill out the form below and I'll get back to you as soon as possible.</p>
-
-        <form id="contactForm">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="firstName">First Name *</label>
-              <input type="text" id="firstName" name="firstName" placeholder="Jane" required autocomplete="given-name" />
-              <span class="field-error" role="alert"></span>
-            </div>
-            <div class="form-group">
-              <label for="lastName">Last Name *</label>
-              <input type="text" id="lastName" name="lastName" placeholder="Smith" required autocomplete="family-name" />
-              <span class="field-error" role="alert"></span>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="email">Email Address *</label>
-            <input type="email" id="email" name="email" placeholder="jane@example.com" required autocomplete="email" />
-            <span class="field-error" role="alert"></span>
-          </div>
-
-          <div class="form-group">
-            <label for="phone">Phone Number</label>
-            <input type="tel" id="phone" name="phone" placeholder="(555) 555-5555" autocomplete="tel" />
-          </div>
-
-          <div class="form-group">
-            <label for="grade">Current Grade / Year</label>
-            <select id="grade" name="grade">
-              <option value="" disabled selected>Select your grade...</option>
-              <option value="sophomore">10th Grade (Sophomore)</option>
-              <option value="junior">11th Grade (Junior)</option>
-              <option value="senior">12th Grade (Senior)</option>
-              <option value="parent">Parent / Guardian</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="service">What are you interested in?</label>
-            <select id="service" name="service">
-              <option value="" disabled selected>Select a service...</option>
-              <option value="essay">Essay Coaching (1-on-1)</option>
-              <option value="ai-review">AI Application Review</option>
-              <option value="financial-aid">Financial Aid Strategy</option>
-              <option value="full-package">Full Admissions Package</option>
-              <option value="unsure">Not sure yet — just exploring</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="message">Message *</label>
-            <textarea id="message" name="message" placeholder="Tell me a bit about where you are in the process, your target schools, and what you're hoping to get help with..." required></textarea>
-            <span class="field-error" role="alert"></span>
-          </div>
-
-          <div class="form-submit">
-            <button type="submit" class="btn btn-primary btn-lg">Send Message</button>
-          </div>
-        </form>
-
-        <div id="contactSuccess">
-          <div class="success-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <h3>Message Received!</h3>
-          <p>Thank you for reaching out. I'll get back to you within 24 hours to schedule your free consultation.</p>
-        </div>
+      <div style="margin-top: 40px; padding: 28px; background: linear-gradient(135deg, var(--navy-dark), #1e4080); border-radius: var(--radius-lg); color: rgba(255,255,255,0.85); font-size: 0.95rem; line-height: 1.7;">
+        Prefer to go straight to booking? <a href="book.html" style="color: var(--gold); font-weight: 600; text-decoration: underline;">See my availability and book a session →</a>
       </div>
 
-    </div>
-  </div>
-</section>
-
-<!-- ===== FAQ ===== -->
-<section class="faq-section">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-label">FAQ</div>
-      <h2 class="section-title">Common Questions</h2>
-      <div class="divider"></div>
-    </div>
-    <div class="faq-grid">
-      <div class="faq-item">
-        <h4>How soon should I start working with you?</h4>
-        <p>The earlier, the better — but it's never too late. Junior year is ideal for essay brainstorming and school list building. Seniors can still benefit significantly from targeted support.</p>
-      </div>
-      <div class="faq-item">
-        <h4>What's the difference between the AI tool and 1-on-1 sessions?</h4>
-        <p>1-on-1 sessions offer personalized guidance, real-time conversation, and strategic planning. The AI tool delivers detailed instant feedback on your essays and application when you can't meet in person.</p>
-      </div>
-      <div class="faq-item">
-        <h4>Do you work with students outside of Pittsburgh?</h4>
-        <p>Yes! All sessions can be conducted virtually via video call. The AI tool is fully online and available anywhere, any time.</p>
-      </div>
-      <div class="faq-item">
-        <h4>Can you help with financial aid even after we receive award letters?</h4>
-        <p>Absolutely. I specialize in helping families understand and appeal financial aid offers — many students leave significant money on the table because they don't know they can negotiate.</p>
-      </div>
-      <div class="faq-item">
-        <h4>How many students do you work with at a time?</h4>
-        <p>I keep my client load intentionally small to ensure every student gets the personalized attention they deserve. Spots are limited, so I encourage you to reach out early.</p>
-      </div>
-      <div class="faq-item">
-        <h4>What does the free consultation include?</h4>
-        <p>A 30-minute call to discuss your goals, timeline, and current situation. I'll share my honest assessment of where you stand and how I can best help — no sales pressure, just genuine guidance.</p>
-      </div>
     </div>
   </div>
 </section>
@@ -518,24 +262,24 @@
           </svg>
           <div class="logo-text">Admit<span>U</span></div>
         </a>
-        <p>Expert college admissions and financial aid tutoring — in person or AI-powered, on your schedule.</p>
+        <p>Expert college admissions and financial aid tutoring — personalized, 1-on-1, on your schedule.</p>
       </div>
       <div class="footer-col">
         <h4>Pages</h4>
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
-          <li><a href="how-it-works.html">How It Works</a></li>
+          <li><a href="book.html">Book a Session</a></li>
           <li><a href="contact.html">Contact</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>Services</h4>
         <ul>
-          <li><a href="#">Essay Coaching</a></li>
-          <li><a href="essay-review.html">AI Essay Review</a></li>
-          <li><a href="#">Financial Aid Strategy</a></li>
-          <li><a href="#">Full Package</a></li>
+          <li><a href="book.html">Essay Coaching</a></li>
+          <li><a href="book.html">Financial Aid Strategy</a></li>
+          <li><a href="book.html">School List Building</a></li>
+          <li><a href="book.html">Full Package</a></li>
         </ul>
       </div>
     </div>
@@ -547,39 +291,5 @@
 </footer>
 
 <script src="script.js"></script>
-<script src="auth.js"></script>
-<script>
-  const client = window.admituSupabase;
-
-  document.getElementById('contactForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const btn = this.querySelector('button[type="submit"]');
-    btn.textContent = 'Sending...';
-    btn.disabled = true;
-
-    const { error } = await client
-      .from('contacts')
-      .insert([{
-        first_name: document.getElementById('firstName').value,
-        last_name:  document.getElementById('lastName').value,
-        email:      document.getElementById('email').value,
-        phone:      document.getElementById('phone').value,
-        grade:      document.getElementById('grade').value,
-        service:    document.getElementById('service').value,
-        message:    document.getElementById('message').value
-      }]);
-
-    if (error) {
-      console.error(error);
-      alert('Something went wrong. Please try again.');
-      btn.textContent = 'Send Message';
-      btn.disabled = false;
-    } else {
-      document.getElementById('contactForm').style.display = 'none';
-      document.getElementById('contactSuccess').style.display = 'block';
-    }
-  });
-</script>
 </body>
 </html>
